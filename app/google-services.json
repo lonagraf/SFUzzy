@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "796724310500",
+    "project_id": "sfuzzy-93892",
+    "storage_bucket": "sfuzzy-93892.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:796724310500:android:1b6583427de575aacc57f1",
+        "android_client_info": {
+          "package_name": "com.example.sfuzzy"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDWGht7speaxJmsglGLAwUq1tz9TVOw4ZU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
