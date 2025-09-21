@@ -117,6 +117,15 @@ public class LoginFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null) {
+            // Пользователь уже авторизован, переходим сразу в MainFragment
+            navigateToMainFragment(
+                    currentUser.getDisplayName(),
+                    currentUser.getEmail(),
+                    currentUser.getPhotoUrl() != null ? currentUser.getPhotoUrl().toString() : null
+            );
+        }
     }
 
     @Override
@@ -154,6 +163,14 @@ public class LoginFragment extends Fragment {
                 fragmentTransaction.commit();
             }
         });
+
+        googleSignInClient.signOut().addOnCompleteListener(requireActivity(),
+                new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        // Теперь можно снова пытаться авторизоваться
+                    }
+                });
 
         loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -194,6 +211,20 @@ public class LoginFragment extends Fragment {
 
 
         return view;
+    }
+
+    private void signOut() {
+        // Firebase sign out
+        mAuth.signOut();
+
+        // Google sign out
+        googleSignInClient.signOut().addOnCompleteListener(requireActivity(),
+                new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        // Пользователь вышел
+                    }
+                });
     }
 
 }
