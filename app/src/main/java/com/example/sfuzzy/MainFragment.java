@@ -7,60 +7,129 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link MainFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import com.bumptech.glide.Glide;
+import com.google.android.material.imageview.ShapeableImageView;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+
 public class MainFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    ShapeableImageView profileImage;
+    TextView userName, mail;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private Map<String, String> wordMap = new LinkedHashMap<>();
+    private List<String> englishWords = new ArrayList<>();
+    private int currentIndex = 0;
+
+    private TextView wordLabel, feedbackLabel;
+    private EditText inputField;
+    private Button submitButton;
+
 
     public MainFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment MainFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static MainFragment newInstance(String param1, String param2) {
-        MainFragment fragment = new MainFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        View view = inflater.inflate(R.layout.fragment_main, container, false);
+        profileImage = view.findViewById(R.id.profileImage);
+        userName = view.findViewById(R.id.userName);
+        mail = view.findViewById(R.id.mail);
+        wordLabel = view.findViewById(R.id.wordLabel);
+        inputField = view.findViewById(R.id.inputField);
+        submitButton = view.findViewById(R.id.submitButton);
+        feedbackLabel = view.findViewById(R.id.feedbackLabel);
+
+        wordMap.put("cat", "кот");
+        wordMap.put("dog", "собака");
+        wordMap.put("sun", "солнце");
+
+        englishWords.addAll(wordMap.keySet());
+        Collections.shuffle(englishWords);
+
+        loadNextWord();
+
+        submitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                checkTranslation();
+            }
+        });
 
 
-        return inflater.inflate(R.layout.fragment_main, container, false);
+
+
+        if (getArguments() != null){
+            String name = getArguments().getString("userName");
+            String email = getArguments().getString("userEmail");
+            String photoUrl = getArguments().getString("photoUrl");
+
+            if (name != null){
+                userName.setText(name);
+            }
+            if (email != null){
+                mail.setText(email);
+            }
+            if (photoUrl != null && !photoUrl.isEmpty()){
+                Glide.with(this)
+                        .load(photoUrl)
+                        .into(profileImage);
+            }
+        }
+        return view;
     }
+
+
+    private void loadNextWord() {
+        if (currentIndex < englishWords.size()) {
+            String word = englishWords.get(currentIndex);
+            wordLabel.setText("Переведите: " + word);
+            inputField.setText("");
+            feedbackLabel.setText("");
+        } else {
+            wordLabel.setText("Поздравляем!");
+            inputField.setEnabled(false);
+            submitButton.setEnabled(false);
+            feedbackLabel.setText("Вы перевели все слова!");
+        }
+    }
+
+    private void checkTranslation() {
+        //получаем строку из EditText
+        String userInput = inputField.getText().toString().trim().toLowerCase(Locale.ROOT);
+
+
+        if (currentIndex >= englishWords.size()) return;
+
+        String correctTranslation = wordMap.get(englishWords.get(currentIndex));
+
+        if (correctTranslation != null && userInput.equals(correctTranslation)) {
+            feedbackLabel.setText("Верно!");
+            currentIndex++;
+            loadNextWord();
+        } else {
+            feedbackLabel.setText("Неправильно. Попробуйте ещё.");
+        }
+    }
+
 }
