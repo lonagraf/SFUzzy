@@ -1,5 +1,6 @@
 package com.example.sfuzzy;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.imageview.ShapeableImageView;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,7 +35,8 @@ public class MainFragment extends Fragment {
 
     private TextView wordLabel, feedbackLabel;
     private EditText inputField;
-    private Button submitButton;
+    private Button submitButton, exitButton;
+
 
 
     public MainFragment() {
@@ -52,6 +55,7 @@ public class MainFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_main, container, false);
+        exitButton = view.findViewById(R.id.exitButton);
         profileImage = view.findViewById(R.id.profileImage);
         userName = view.findViewById(R.id.userName);
         mail = view.findViewById(R.id.mail);
@@ -68,6 +72,25 @@ public class MainFragment extends Fragment {
         Collections.shuffle(englishWords);
 
         loadNextWord();
+
+        exitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FirebaseAuth.getInstance().signOut();
+
+                // Возвращаем пользователя на экран входа (LoginFragment)
+                if (getActivity() != null) {
+                    // Заменяем текущий фрагмент на LoginFragment
+                    getActivity().getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.fragment_container_view_tag, new LoginFragment()) // container id из activity_main.xml
+                            .commit();
+
+                    // Можно очистить back stack, чтобы нельзя было вернуться назад
+                    getActivity().getSupportFragmentManager().popBackStack(null, androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                }
+            }
+        });
 
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
