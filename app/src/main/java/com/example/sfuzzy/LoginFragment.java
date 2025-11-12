@@ -100,18 +100,19 @@ public class LoginFragment extends Fragment {
     });
 
     private void navigateToMainFragment(String userName, String userEmail, String photoUrl) {
-        MainFragment mainFragment = new MainFragment();
+        TopicsFragment topicsFragment = new TopicsFragment(); // <-- заменили фрагмент
         Bundle args = new Bundle();
         args.putString("userName", userName);
         args.putString("userEmail", userEmail);
         args.putString("photoUrl", photoUrl);
-        mainFragment.setArguments(args);
+        topicsFragment.setArguments(args);
 
         FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.fragment_container_view_tag, mainFragment);
+        fragmentTransaction.replace(R.id.fragment_container_view_tag, topicsFragment);
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
     }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
