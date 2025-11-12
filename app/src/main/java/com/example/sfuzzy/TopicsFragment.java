@@ -23,7 +23,7 @@ public class TopicsFragment extends Fragment {
 
         wordsButton.setOnClickListener(v -> openFragment(new MainFragment())); // слова
         // grammarButton.setOnClickListener(v -> openFragment(new GrammarFragment())); // грамматика
-        //theoryButton.setOnClickListener(v -> openFragment(new TheoryFragment())); // теория
+        theoryButton.setOnClickListener(v -> openFragment(new TheoryFragment())); // теория
 
         return view;
     }
