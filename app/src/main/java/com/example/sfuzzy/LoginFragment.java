@@ -79,7 +79,7 @@ public class LoginFragment extends Fragment {
                                 FirebaseUser user = mAuth.getCurrentUser();
                                 if (user != null) {
                                     // Передаем данные в MainFragment
-                                        navigateToMainFragment(
+                                        navigateToTopicsFragment(
                                             user.getDisplayName(),
                                             user.getEmail(),
                                             user.getPhotoUrl() != null ? user.getPhotoUrl().toString() : null
@@ -99,16 +99,16 @@ public class LoginFragment extends Fragment {
         }
     });
 
-    private void navigateToMainFragment(String userName, String userEmail, String photoUrl) {
-        LevelsFragment levelsFragment = new LevelsFragment(); // <-- заменили фрагмент
+    private void navigateToTopicsFragment(String userName, String userEmail, String photoUrl) {
+        TopicsFragment topicsFragment = new TopicsFragment();
         Bundle args = new Bundle();
         args.putString("userName", userName);
         args.putString("userEmail", userEmail);
         args.putString("photoUrl", photoUrl);
-        levelsFragment.setArguments(args);
+        topicsFragment.setArguments(args);
 
         FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.fragment_container_view_tag, levelsFragment);
+        fragmentTransaction.replace(R.id.fragment_container_view_tag, topicsFragment);
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
     }
@@ -120,8 +120,8 @@ public class LoginFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
-            // Пользователь уже авторизован, переходим сразу в MainFragment
-            navigateToMainFragment(
+            // Пользователь уже авторизован, переходим сразу в темы
+            navigateToTopicsFragment(
                     currentUser.getDisplayName(),
                     currentUser.getEmail(),
                     currentUser.getPhotoUrl() != null ? currentUser.getPhotoUrl().toString() : null
@@ -176,35 +176,31 @@ public class LoginFragment extends Fragment {
         loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String email, password;
-                email = emailText.getText().toString();
-                password = passwordText.getText().toString();
+                String email = emailText.getText().toString();
+                String password = passwordText.getText().toString();
 
-                if (TextUtils.isEmpty(email)){
+                if (TextUtils.isEmpty(email)) {
                     Toast.makeText(requireContext(), "Enter email", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if (TextUtils.isEmpty(password)){
+                if (TextUtils.isEmpty(password)) {
                     Toast.makeText(requireContext(), "Enter password", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
                 mAuth.signInWithEmailAndPassword(email, password)
-                        .addOnCompleteListener( new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (task.isSuccessful()){
-                                    Toast.makeText(requireContext(), "Успешно", Toast.LENGTH_SHORT).show();
-                                    FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-                                    fragmentTransaction.replace(R.id.fragment_container_view_tag, new MainFragment());
-                                    fragmentTransaction.addToBackStack(null);
-                                    fragmentTransaction.commit();
-                                } else {
-                                    Toast.makeText(requireContext(), "Что-то пошло не так", Toast.LENGTH_SHORT).show();
-                                }
+                        .addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
+                                FirebaseUser user = mAuth.getCurrentUser();
+                                navigateToTopicsFragment(
+                                        user.getDisplayName(),
+                                        user.getEmail(),
+                                        user.getPhotoUrl() != null ? user.getPhotoUrl().toString() : null
+                                );
+                            } else {
+                                Toast.makeText(requireContext(), "Что-то пошло не так", Toast.LENGTH_SHORT).show();
                             }
                         });
-
             }
         });
 
