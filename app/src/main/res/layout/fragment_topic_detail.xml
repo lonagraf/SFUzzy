@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <!-- Кнопка Назад -->
+    <Button
+        android:id="@+id/btnBack"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Back"
+        android:backgroundTint="@color/primary"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"/>
+
+    <!-- Контейнер по центру экрана -->
+    <LinearLayout
+        android:id="@+id/centerBlock"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_centerInParent="true">
+
+        <!-- Заголовок темы -->
+        <TextView
+            android:id="@+id/tvTopicTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Topic"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:paddingBottom="24dp"/>
+
+        <!-- КНОПКИ -->
+        <Button
+            android:id="@+id/btnWords"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Words"
+            android:layout_marginBottom="12dp"
+            android:backgroundTint="@color/primary"
+            android:textSize="9pt"/>
+
+        <Button
+            android:id="@+id/btnTheory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Theory"
+            android:layout_marginBottom="12dp"
+            android:backgroundTint="@color/primary"
+            android:textSize="9pt"/>
+
+        <Button
+            android:id="@+id/btnGrammar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Grammar practice"
+            android:backgroundTint="@color/primary"
+            android:textSize="9pt"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

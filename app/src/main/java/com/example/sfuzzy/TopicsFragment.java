@@ -56,8 +56,13 @@ public class TopicsFragment extends Fragment {
     }
 
     private void openTopic(String topicName) {
-        // Здесь можно запускать новый фрагмент или активити с содержимым темы
-        Toast.makeText(getContext(), "Opening " + topicName, Toast.LENGTH_SHORT).show();
+        TopicDetailFragment detailFragment = TopicDetailFragment.newInstance(topicName);
+        requireActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container_view_tag, detailFragment)
+                .addToBackStack(null)
+                .commit();
     }
+
 
 }
