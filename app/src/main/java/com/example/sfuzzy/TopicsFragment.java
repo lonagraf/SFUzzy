@@ -10,8 +10,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import android.widget.Toast;
-
 
 public class TopicsFragment extends Fragment {
 
@@ -30,39 +28,46 @@ public class TopicsFragment extends Fragment {
         tvGreeting = view.findViewById(R.id.tvGreeting);
         ivMascot = view.findViewById(R.id.ivMascot);
 
-        tvGreeting.setText("Hi, !"); // Можно динамически менять имя
+        tvGreeting.setText("Hi!"); // Можно динамически менять имя
 
         // Topic 1
         tvTopic1 = view.findViewById(R.id.tvTopicName);
         btnOpen1 = view.findViewById(R.id.btnOpen);
-        btnOpen1.setOnClickListener(v -> openTopic(tvTopic1.getText().toString()));
+        btnOpen1.setOnClickListener(v ->
+                openTopic(tvTopic1.getText().toString(), R.drawable.basics)
+        );
 
         // Topic 2
         tvTopic2 = view.findViewById(R.id.tvTopicName2);
         btnOpen2 = view.findViewById(R.id.btnOpen2);
-        btnOpen2.setOnClickListener(v -> openTopic(tvTopic2.getText().toString()));
+        btnOpen2.setOnClickListener(v ->
+                openTopic(tvTopic2.getText().toString(), R.drawable.family)
+        );
 
         // Topic 3
         tvTopic3 = view.findViewById(R.id.tvTopicName3);
         btnOpen3 = view.findViewById(R.id.btnOpen3);
-        btnOpen3.setOnClickListener(v -> openTopic(tvTopic3.getText().toString()));
+        btnOpen3.setOnClickListener(v ->
+                openTopic(tvTopic3.getText().toString(), R.drawable.food)
+        );
 
         // Topic 4
         tvTopic4 = view.findViewById(R.id.tvTopicName4);
         btnOpen4 = view.findViewById(R.id.btnOpen4);
-        btnOpen4.setOnClickListener(v -> openTopic(tvTopic4.getText().toString()));
+        btnOpen4.setOnClickListener(v ->
+                openTopic(tvTopic4.getText().toString(), R.drawable.travel)
+        );
 
         return view;
     }
 
-    private void openTopic(String topicName) {
-        TopicDetailFragment detailFragment = TopicDetailFragment.newInstance(topicName);
+    private void openTopic(String topicName, int imageResId) {
+        TopicDetailFragment detailFragment = TopicDetailFragment.newInstance(topicName, imageResId);
+
         requireActivity().getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.fragment_container_view_tag, detailFragment)
                 .addToBackStack(null)
                 .commit();
     }
-
-
 }

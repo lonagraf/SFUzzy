@@ -1,41 +1,44 @@
-<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp">
 
-    <!-- Кнопка Назад -->
-    <Button
-        android:id="@+id/btnBack"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Back"
-        android:backgroundTint="@color/primary"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="16dp"/>
-
-    <!-- Контейнер по центру экрана -->
     <LinearLayout
-        android:id="@+id/centerBlock"
         android:orientation="vertical"
+        android:gravity="center_horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:layout_centerInParent="true">
+        android:layout_height="wrap_content">
+
+        <!-- Кнопка назад -->
+        <Button
+            android:id="@+id/btnBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="← Back"
+            android:backgroundTint="@color/primary"
+            android:textColor="@color/white"
+            android:layout_marginBottom="20dp"/>
+
+        <!-- Картинка темы -->
+        <ImageView
+            android:id="@+id/ivTopicImage"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_marginBottom="20dp"
+            android:scaleType="centerCrop"/>
 
         <!-- Заголовок темы -->
         <TextView
             android:id="@+id/tvTopicTitle"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Topic"
             android:textSize="24sp"
             android:textStyle="bold"
             android:gravity="center"
-            android:paddingBottom="24dp"/>
+            android:layout_marginBottom="32dp"/>
 
-        <!-- КНОПКИ -->
+        <!-- Кнопки -->
         <Button
             android:id="@+id/btnWords"
             android:layout_width="match_parent"
@@ -43,7 +46,7 @@
             android:text="Words"
             android:layout_marginBottom="12dp"
             android:backgroundTint="@color/primary"
-            android:textSize="9pt"/>
+            android:textColor="@color/white"/>
 
         <Button
             android:id="@+id/btnTheory"
@@ -52,16 +55,16 @@
             android:text="Theory"
             android:layout_marginBottom="12dp"
             android:backgroundTint="@color/primary"
-            android:textSize="9pt"/>
+            android:textColor="@color/white"/>
 
         <Button
             android:id="@+id/btnGrammar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Grammar practice"
+            android:layout_marginBottom="12dp"
             android:backgroundTint="@color/primary"
-            android:textSize="9pt"/>
+            android:textColor="@color/white"/>
 
     </LinearLayout>
-
-</RelativeLayout>
+</ScrollView>

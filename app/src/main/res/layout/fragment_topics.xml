@@ -82,8 +82,9 @@
 
                 <ImageView
                     android:id="@+id/icon"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"/>
+                    android:layout_width="47dp"
+                    android:layout_height="48dp"
+                    android:src="@drawable/basics" />
 
                 <TextView
                     android:id="@+id/tvTopicName"
@@ -102,7 +103,8 @@
                     android:text="Open"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
-                    android:backgroundTint="@color/primary"/>
+                    android:backgroundTint="@color/primary"
+                    android:textColor="@color/white"/>
             </RelativeLayout>
 
         </androidx.cardview.widget.CardView>
@@ -121,8 +123,9 @@
 
                 <ImageView
                     android:id="@+id/icon2"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"/>
+                    android:layout_width="47dp"
+                    android:layout_height="48dp"
+                    android:src="@drawable/family"/>
 
                 <TextView
                     android:id="@+id/tvTopicName2"
@@ -141,7 +144,8 @@
                     android:text="Open"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
-                    android:backgroundTint="@color/primary"/>
+                    android:backgroundTint="@color/primary"
+                    android:textColor="@color/white"/>
             </RelativeLayout>
 
         </androidx.cardview.widget.CardView>
@@ -159,8 +163,9 @@
 
             <ImageView
                 android:id="@+id/icon3"
-                android:layout_width="32dp"
-                android:layout_height="32dp"/>
+                android:layout_width="47dp"
+                android:layout_height="48dp"
+                android:src="@drawable/food"/>
 
             <TextView
                 android:id="@+id/tvTopicName3"
@@ -179,7 +184,8 @@
                 android:text="Open"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:backgroundTint="@color/primary"/>
+                android:backgroundTint="@color/primary"
+                android:textColor="@color/white"/>
         </RelativeLayout>
         </androidx.cardview.widget.CardView>
 
@@ -197,8 +203,9 @@
 
                 <ImageView
                     android:id="@+id/icon4"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"/>
+                    android:layout_width="47dp"
+                    android:layout_height="48dp"
+                    android:src="@drawable/travel"/>
 
                 <TextView
                     android:id="@+id/tvTopicName4"
@@ -217,7 +224,8 @@
                     android:text="Open"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
-                    android:backgroundTint="@color/primary"/>
+                    android:backgroundTint="@color/primary"
+                    android:textColor="@color/white"/>
             </RelativeLayout>
 
         </androidx.cardview.widget.CardView>

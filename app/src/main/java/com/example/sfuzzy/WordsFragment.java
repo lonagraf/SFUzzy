@@ -9,13 +9,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-public class TheoryFragment extends Fragment {
+public class WordsFragment extends Fragment {
 
     private static final String ARG_TOPIC_NAME = "topic_name";
     private String topicName;
 
-    public static TheoryFragment newInstance(String topicName) {
-        TheoryFragment fragment = new TheoryFragment();
+    public static WordsFragment newInstance(String topicName) {
+        WordsFragment fragment = new WordsFragment();
         Bundle args = new Bundle();
         args.putString(ARG_TOPIC_NAME, topicName);
         fragment.setArguments(args);
@@ -34,28 +34,28 @@ public class TheoryFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_theory, container, false);
+        View view = inflater.inflate(R.layout.fragment_words, container, false);
 
-        TextView tvTheoryContent = view.findViewById(R.id.tvTheoryContent);
+        TextView tvWordsContent = view.findViewById(R.id.tvWordsContent);
 
-        // Подставляем текст в зависимости от темы
-        tvTheoryContent.setText(getTheoryTextForTopic(topicName));
+        // Подставляем слова в зависимости от темы
+        tvWordsContent.setText(getWordsForTopic(topicName));
 
         return view;
     }
 
-    private String getTheoryTextForTopic(String topic) {
+    private String getWordsForTopic(String topic) {
         switch (topic) {
             case "Basics":
-                return "Теория по теме Basics...";
+                return "Слова по теме Basics...";
             case "Family":
-                return "Теория по теме Family...";
+                return "Слова по теме Family...";
             case "Food":
-                return "Теория по теме Food...";
+                return "Слова по теме Food...";
             case "Travel":
-                return "Теория по теме Travel...";
+                return "Слова по теме Travel...";
             default:
-                return "Теория недоступна";
+                return "Слова недоступны";
         }
     }
 }
