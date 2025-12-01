@@ -47,7 +47,7 @@ public class WordsFragment extends Fragment {
     private String topicName;
     private TextView wordLabel, feedbackLabel;
     private EditText inputField;
-    private Button submitButton;
+    private Button submitButton, backButton;
 
     FirebaseDatabase db = FirebaseDatabase.getInstance("https://sfuzzy-93892-default-rtdb.asia-southeast1.firebasedatabase.app/");
     DatabaseReference dbRef;
@@ -77,7 +77,16 @@ public class WordsFragment extends Fragment {
         wordLabel = view.findViewById(R.id.wordLabel);
         inputField = view.findViewById(R.id.inputField);
         submitButton = view.findViewById(R.id.submitButton);
+        backButton = view.findViewById(R.id.backButton);
         feedbackLabel = view.findViewById(R.id.feedbackLabel);
+
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getParentFragmentManager().popBackStack();
+            }
+        });
+
         dbRef = db.getReference("topics")
                 .child(topicName)
                 .child("words");
@@ -123,28 +132,6 @@ public class WordsFragment extends Fragment {
 
         return view;
     }
-
-
-
-
-    private boolean isLikelyWordMap(Map<?, ?> map) {
-        // Проверяем, похоже ли это на словарь слов
-        if (map.isEmpty()) return false;
-
-        for (Object key : map.keySet()) {
-            if (key instanceof String) {
-                String strKey = (String) key;
-                // Если ключ - английское слово (только буквы), вероятно это наш словарь
-                if (strKey.matches("[a-zA-Z]+")) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-
-
 
     private void loadNextWord() {
         System.out.println("Loading next word. Current index: " + currentIndex + ", Total: " + englishWords.size());
@@ -196,20 +183,4 @@ public class WordsFragment extends Fragment {
         }
     }
 
-
-
-    private String getWordsForTopic(String topic) {
-        switch (topic) {
-            case "Basics":
-                return "Слова по теме Basics...";
-            case "Family":
-                return "Слова по теме Family...";
-            case "Food":
-                return "Слова по теме Food...";
-            case "Travel":
-                return "Слова по теме Travel...";
-            default:
-                return "Слова недоступны";
-        }
-    }
 }
