@@ -16,14 +16,19 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class GrammarFragment extends Fragment {
 
@@ -193,7 +198,41 @@ public class GrammarFragment extends Fragment {
         rgAnswers.removeAllViews();
         btnCheck.setVisibility(View.GONE);
         btnBackToMenu.setVisibility(View.VISIBLE);
+
+        updateLessonsCompleted(); // <-- обновляем прогресс
     }
+
+    private void updateLessonsCompleted() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) return;
+
+        String uid = user.getUid();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        db.collection("users").document(uid).get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        Map<String, Object> progress = (Map<String, Object>) documentSnapshot.get("progress");
+                        if (progress == null) progress = new HashMap<>();
+
+                        long lessonsCompleted = ((Number) progress.getOrDefault("lessonsCompleted", 0)).longValue();
+                        lessonsCompleted++; // прибавляем один пройденный урок
+
+                        Map<String, Object> updates = new HashMap<>();
+                        updates.put("progress.lessonsCompleted", lessonsCompleted);
+
+                        db.collection("users").document(uid)
+                                .update(updates)
+                                .addOnSuccessListener(aVoid -> {
+                                    Toast.makeText(getContext(), "Прогресс обновлён", Toast.LENGTH_SHORT).show();
+                                })
+                                .addOnFailureListener(e -> {
+                                    Toast.makeText(getContext(), "Ошибка обновления прогресса: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                });
+                    }
+                });
+    }
+
 
     static class Question {
         String question;

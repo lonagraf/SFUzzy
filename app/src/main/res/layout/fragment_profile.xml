@@ -11,6 +11,15 @@
         android:orientation="vertical"
         android:gravity="center_horizontal">
 
+        <Button
+            android:id="@+id/btnBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="← Back"
+            android:backgroundTint="@color/primary"
+            android:textColor="@color/white"
+            android:layout_marginBottom="20dp"/>
+
         <!-- Аватарка и имя -->
         <ImageView
             android:id="@+id/ivAvatar"
@@ -68,20 +77,7 @@
                     android:textSize="16sp"
                     android:layout_marginBottom="6dp"/>
 
-                <TextView
-                    android:id="@+id/tvStat2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Time learned: 0 min"
-                    android:textSize="16sp"
-                    android:layout_marginBottom="6dp"/>
 
-                <TextView
-                    android:id="@+id/tvStat3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Current level: 1"
-                    android:textSize="16sp"/>
             </LinearLayout>
 
         </androidx.cardview.widget.CardView>
