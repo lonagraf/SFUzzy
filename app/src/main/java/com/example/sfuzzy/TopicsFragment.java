@@ -28,6 +28,17 @@ public class TopicsFragment extends Fragment {
         tvGreeting = view.findViewById(R.id.tvGreeting);
         ivMascot = view.findViewById(R.id.ivMascot);
 
+        Button btnProfile = view.findViewById(R.id.btnProfile);
+
+        btnProfile.setOnClickListener(v -> {
+            requireActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment_container_view_tag, new ProfileFragment())
+                    .addToBackStack(null)
+                    .commit();
+        });
+
+
         tvGreeting.setText("Hi!"); // Можно динамически менять имя
 
         // Topic 1
