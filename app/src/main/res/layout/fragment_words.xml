@@ -1,67 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?android:attr/colorBackground"
     android:padding="16dp">
 
+    <!-- Прогресс бар ВВЕРХУ -->
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="60dp"
+        android:visibility="visible"
+        style="?android:attr/progressBarStyleLarge"/>
+
+    <!-- Кнопка назад (скрыта при загрузке) -->
     <Button
         android:id="@+id/backButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
+        android:layout_below="@id/progressBar"
+        android:layout_marginTop="24dp"
+        android:layout_centerHorizontal="true"
+        android:visibility="gone"
         android:text="← Back"
         android:textColor="?attr/colorOnPrimary"
         android:backgroundTint="?attr/colorPrimary"/>
-<LinearLayout
-android:layout_width="match_parent"
-android:layout_height="wrap_content"
-android:orientation="vertical"
-android:gravity="center_horizontal"
-android:layout_centerInParent="true">
 
-<TextView
-    android:id="@+id/wordLabel"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="30dp"
-    android:padding="8dp"
-    android:text="Переведите слово"
-    android:textColor="?android:attr/textColorPrimary"
-    android:textSize="20sp"
-    android:textStyle="bold"/>
+    <!-- Контент (скрыт при загрузке) -->
+    <LinearLayout
+        android:id="@+id/contentLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/backButton"
+        android:layout_marginTop="24dp"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:visibility="gone">
 
-<EditText
-    android:id="@+id/inputField"
-    android:inputType="text"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginStart="20dp"
-    android:layout_marginEnd="20dp"
-    android:layout_marginTop="10dp"
-    android:hint="Введите перевод"
-    android:textColor="?android:attr/textColorPrimary"
-    android:textColorHint="?android:attr/textColorSecondary"/>
+        <TextView
+            android:id="@+id/wordLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:padding="8dp"
+            android:text="Переведите слово"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textSize="20sp"
+            android:textStyle="bold"/>
 
-<Button
-    android:id="@+id/submitButton"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="15dp"
-    android:text="Проверить"
-    android:textColor="?attr/colorOnPrimary"
-    android:backgroundTint="?attr/colorPrimary"/>
+        <EditText
+            android:id="@+id/inputField"
+            android:inputType="text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="10dp"
+            android:hint="Введите перевод"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textColorHint="?android:attr/textColorSecondary"/>
 
-<TextView
-    android:id="@+id/feedbackLabel"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="15dp"
-    android:padding="8dp"
-    android:textColor="?android:attr/textColorSecondary"/>
+        <Button
+            android:id="@+id/submitButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:text="Проверить"
+            android:textColor="?attr/colorOnPrimary"
+            android:backgroundTint="?attr/colorPrimary"/>
 
+        <TextView
+            android:id="@+id/feedbackLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:padding="8dp"
+            android:textColor="?android:attr/textColorSecondary"/>
+    </LinearLayout>
 
-</LinearLayout>
-
-    </RelativeLayout>
+</RelativeLayout>
