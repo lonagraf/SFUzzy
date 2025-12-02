@@ -52,7 +52,6 @@ public class TheoryFragment extends Fragment {
         Button btnBack = view.findViewById(R.id.btnBack);
         btnBack.setOnClickListener(v -> requireActivity().getSupportFragmentManager().popBackStack());
 
-
         return view;
     }
 
