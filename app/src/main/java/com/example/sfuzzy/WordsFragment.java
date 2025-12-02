@@ -4,25 +4,21 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import android.widget.Button;
+import android.widget.EditText;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -42,8 +38,6 @@ public class WordsFragment extends Fragment {
     private TextView wordLabel, feedbackLabel;
     private EditText inputField;
     private Button submitButton, backButton;
-    private ProgressBar progressBar;
-    private LinearLayout contentLayout;
 
     private FirebaseDatabase db = FirebaseDatabase.getInstance("https://sfuzzy-93892-default-rtdb.asia-southeast1.firebasedatabase.app/");
     private DatabaseReference dbRef;
@@ -80,12 +74,6 @@ public class WordsFragment extends Fragment {
         submitButton = view.findViewById(R.id.submitButton);
         backButton = view.findViewById(R.id.backButton);
         feedbackLabel = view.findViewById(R.id.feedbackLabel);
-        progressBar = view.findViewById(R.id.progressBar);
-        contentLayout = view.findViewById(R.id.contentLayout);
-
-        // Показываем прогресс бар, скрываем контент
-        progressBar.setVisibility(View.VISIBLE);
-        contentLayout.setVisibility(View.GONE);
 
         backButton.setOnClickListener(v -> getParentFragmentManager().popBackStack());
 
@@ -114,23 +102,12 @@ public class WordsFragment extends Fragment {
                 englishWords.addAll(wordMap.keySet());
                 Collections.shuffle(englishWords);
                 currentIndex = 0;
-
-                // Скрываем прогресс бар, показываем контент
-                progressBar.setVisibility(View.GONE);
-                contentLayout.setVisibility(View.VISIBLE);
-
-                if (!englishWords.isEmpty()) {
-                    loadNextWord();
-                } else {
-                    wordLabel.setText("Слова не найдены");
-                    feedbackLabel.setText("Попробуйте снова");
-                }
+                loadNextWord();
             }
+
 
             @Override
             public void onCancelled(DatabaseError error) {
-                progressBar.setVisibility(View.GONE);
-                contentLayout.setVisibility(View.VISIBLE);
                 feedbackLabel.setText("Ошибка загрузки: " + error.getMessage());
             }
         });
@@ -151,25 +128,19 @@ public class WordsFragment extends Fragment {
             String word = englishWords.get(currentIndex);
             wordLabel.setText("Переведите: " + word);
             inputField.setText("");
-            inputField.requestFocus();
             feedbackLabel.setText("Слово " + (currentIndex + 1) + " из " + englishWords.size());
         } else {
             // Все слова пройдены
-            wordLabel.setText("Поздравляем! Все слова пройдены!");
+            wordLabel.setText("Поздравляем!");
             inputField.setEnabled(false);
             submitButton.setEnabled(false);
-            feedbackLabel.setText("Вы завершили все " + englishWords.size() + " слов!");
-            updateProgress(); // обновляем прогресс
+            feedbackLabel.setText("Вы завершили все слова! (" + englishWords.size() + " слов)");
+            updateProgress(); // обновляем прогресс один раз
         }
     }
 
     private void checkTranslation() {
         String userInput = inputField.getText().toString().trim().toLowerCase(Locale.ROOT);
-        if (userInput.isEmpty()) {
-            Toast.makeText(getContext(), "Введите перевод", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
         if (currentIndex >= englishWords.size()) return;
 
         String word = englishWords.get(currentIndex);
@@ -188,12 +159,11 @@ public class WordsFragment extends Fragment {
         }
 
         if (isCorrect) {
-            feedbackLabel.setText("Верно! ✅");
+            feedbackLabel.setText("Верно!");
             currentIndex++;
-            // Небольшая задержка перед следующим словом
-            inputField.postDelayed(() -> loadNextWord(), 800);
+            loadNextWord(); // прогресс обновится только после конца
         } else {
-            feedbackLabel.setText("Неверно ❌\nПравильно: " + correctTranslations);
+            feedbackLabel.setText("Неправильно. Возможные ответы: " + correctTranslations);
         }
     }
 
@@ -202,27 +172,16 @@ public class WordsFragment extends Fragment {
         if (user == null) return;
 
         String uid = user.getUid();
-        firestore.collection("users").document(uid).get()
-                .addOnSuccessListener(documentSnapshot -> {
-                    if (documentSnapshot.exists()) {
-                        Map<String, Object> progress = (Map<String, Object>) documentSnapshot.get("progress");
-                        if (progress == null) progress = new HashMap<>();
-
-                        long lessonsCompleted = ((Number) progress.getOrDefault("lessonsCompleted", 0)).longValue();
-                        lessonsCompleted++; // увеличиваем на 1
-
-                        Map<String, Object> updates = new HashMap<>();
-                        updates.put("progress.lessonsCompleted", lessonsCompleted);
-
-                        firestore.collection("users").document(uid)
-                                .update(updates)
-                                .addOnSuccessListener(aVoid -> {
-                                    Toast.makeText(getContext(), "Прогресс обновлён!", Toast.LENGTH_SHORT).show();
-                                })
-                                .addOnFailureListener(e -> {
-                                    Toast.makeText(getContext(), "Ошибка обновления прогресса", Toast.LENGTH_SHORT).show();
-                                });
-                    }
-                });
+        firestore.collection("users").document(uid).get().addOnSuccessListener(doc -> {
+            Map<String, Object> progress = (Map<String, Object>) doc.get("progress");
+            if (progress == null) progress = new HashMap<>();
+            long lessonsCompleted = ((Number) progress.getOrDefault("lessonsCompleted", 0)).longValue();
+            lessonsCompleted++; // увеличиваем на 1
+            progress.put("lessonsCompleted", lessonsCompleted);
+            firestore.collection("users").document(uid)
+                    .update("progress", progress)
+                    .addOnFailureListener(e -> System.out.println("Ошибка обновления прогресса: " + e.getMessage()));
+        });
     }
+
 }

@@ -1,43 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?android:attr/colorBackground"
     android:padding="16dp">
 
-    <!-- Прогресс бар ВВЕРХУ -->
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="60dp"
-        android:visibility="visible"
-        style="?android:attr/progressBarStyleLarge"/>
-
-    <!-- Кнопка назад (скрыта при загрузке) -->
-    <Button
-        android:id="@+id/backButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/progressBar"
-        android:layout_marginTop="24dp"
-        android:layout_centerHorizontal="true"
-        android:visibility="gone"
-        android:text="← Back"
-        android:textColor="?attr/colorOnPrimary"
-        android:backgroundTint="?attr/colorPrimary"/>
-
-    <!-- Контент (скрыт при загрузке) -->
     <LinearLayout
-        android:id="@+id/contentLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/backButton"
-        android:layout_marginTop="24dp"
         android:orientation="vertical"
         android:gravity="center_horizontal"
-        android:visibility="gone">
+        android:layout_centerInParent="true">
 
         <TextView
             android:id="@+id/wordLabel"
@@ -78,6 +52,16 @@
             android:layout_marginTop="15dp"
             android:padding="8dp"
             android:textColor="?android:attr/textColorSecondary"/>
+
+        <Button
+            android:id="@+id/backButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:text="Назад"
+            android:textColor="?attr/colorOnPrimary"
+            android:backgroundTint="?attr/colorPrimary"/>
+
     </LinearLayout>
 
 </RelativeLayout>
