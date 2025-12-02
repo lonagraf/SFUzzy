@@ -8,7 +8,6 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,7 +36,7 @@ public class GrammarFragment extends Fragment {
 
     private TextView tvQuestion;
     private RadioGroup rgAnswers;
-    private Button btnCheck, btnBackToMenu;
+    private Button btnCheck, btnBackToMenu, btnBack;
     private ProgressBar progressBar;
 
     private List<Question> questions = new ArrayList<>();
@@ -71,6 +70,7 @@ public class GrammarFragment extends Fragment {
         rgAnswers = view.findViewById(R.id.rgAnswers);
         btnCheck = view.findViewById(R.id.btnCheck);
         btnBackToMenu = view.findViewById(R.id.btnBackToMenu);
+        btnBack = view.findViewById(R.id.btnBack); // Новая кнопка Back
         progressBar = view.findViewById(R.id.progressBar);
 
         // Скрываем вопросы и кнопку до загрузки
@@ -82,9 +82,15 @@ public class GrammarFragment extends Fragment {
 
         loadQuestionsFromFirebase();
 
+        // Обработчик кнопки Check
         btnCheck.setOnClickListener(v -> checkAnswer());
 
+        // Обработчик кнопки "В меню" (после завершения теста)
         btnBackToMenu.setOnClickListener(v -> requireActivity().getSupportFragmentManager()
+                .popBackStack());
+
+        // Обработчик кнопки Back (в любое время)
+        btnBack.setOnClickListener(v -> requireActivity().getSupportFragmentManager()
                 .popBackStack());
 
         return view;
@@ -232,7 +238,6 @@ public class GrammarFragment extends Fragment {
                     }
                 });
     }
-
 
     static class Question {
         String question;
