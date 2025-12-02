@@ -105,6 +105,7 @@ public class WordsFragment extends Fragment {
                 loadNextWord();
             }
 
+
             @Override
             public void onCancelled(DatabaseError error) {
                 feedbackLabel.setText("Ошибка загрузки: " + error.getMessage());

@@ -15,10 +15,20 @@
         android:textColor="@android:color/white"
         android:layout_marginBottom="16dp"/>
 
+    <!-- Прогресс бар -->
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="visible"
+        style="?android:attr/progressBarStyleLarge"/>
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/tvTheoryContent"

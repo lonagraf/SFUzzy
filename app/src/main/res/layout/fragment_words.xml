@@ -6,62 +6,62 @@
     android:background="?android:attr/colorBackground"
     android:padding="16dp">
 
-    <Button
-        android:id="@+id/backButton"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:text="← Back"
-        android:textColor="?attr/colorOnPrimary"
-        android:backgroundTint="?attr/colorPrimary"/>
-<LinearLayout
-android:layout_width="match_parent"
-android:layout_height="wrap_content"
-android:orientation="vertical"
-android:gravity="center_horizontal"
-android:layout_centerInParent="true">
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:layout_centerInParent="true">
 
-<TextView
-    android:id="@+id/wordLabel"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="30dp"
-    android:padding="8dp"
-    android:text="Переведите слово"
-    android:textColor="?android:attr/textColorPrimary"
-    android:textSize="20sp"
-    android:textStyle="bold"/>
+        <TextView
+            android:id="@+id/wordLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:padding="8dp"
+            android:text="Переведите слово"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textSize="20sp"
+            android:textStyle="bold"/>
 
-<EditText
-    android:id="@+id/inputField"
-    android:inputType="text"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginStart="20dp"
-    android:layout_marginEnd="20dp"
-    android:layout_marginTop="10dp"
-    android:hint="Введите перевод"
-    android:textColor="?android:attr/textColorPrimary"
-    android:textColorHint="?android:attr/textColorSecondary"/>
+        <EditText
+            android:id="@+id/inputField"
+            android:inputType="text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="10dp"
+            android:hint="Введите перевод"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textColorHint="?android:attr/textColorSecondary"/>
 
-<Button
-    android:id="@+id/submitButton"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="15dp"
-    android:text="Проверить"
-    android:textColor="?attr/colorOnPrimary"
-    android:backgroundTint="?attr/colorPrimary"/>
+        <Button
+            android:id="@+id/submitButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:text="Проверить"
+            android:textColor="?attr/colorOnPrimary"
+            android:backgroundTint="?attr/colorPrimary"/>
 
-<TextView
-    android:id="@+id/feedbackLabel"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="15dp"
-    android:padding="8dp"
-    android:textColor="?android:attr/textColorSecondary"/>
+        <TextView
+            android:id="@+id/feedbackLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:padding="8dp"
+            android:textColor="?android:attr/textColorSecondary"/>
 
+        <Button
+            android:id="@+id/backButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:text="Назад"
+            android:textColor="?attr/colorOnPrimary"
+            android:backgroundTint="?attr/colorPrimary"/>
 
-</LinearLayout>
+    </LinearLayout>
 
-    </RelativeLayout>
+</RelativeLayout>
