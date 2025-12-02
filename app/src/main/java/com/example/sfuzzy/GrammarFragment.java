@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -38,6 +39,7 @@ public class GrammarFragment extends Fragment {
     private RadioGroup rgAnswers;
     private Button btnCheck, btnBackToMenu, btnBack;
     private ProgressBar progressBar;
+    private LinearLayout contentLayout;
 
     private List<Question> questions = new ArrayList<>();
     private int currentQuestionIndex = 0;
@@ -70,26 +72,20 @@ public class GrammarFragment extends Fragment {
         rgAnswers = view.findViewById(R.id.rgAnswers);
         btnCheck = view.findViewById(R.id.btnCheck);
         btnBackToMenu = view.findViewById(R.id.btnBackToMenu);
-        btnBack = view.findViewById(R.id.btnBack); // Новая кнопка Back
+        btnBack = view.findViewById(R.id.btnBack);
         progressBar = view.findViewById(R.id.progressBar);
+        contentLayout = view.findViewById(R.id.contentLayout);
 
-        // Скрываем вопросы и кнопку до загрузки
-        tvQuestion.setVisibility(View.GONE);
-        rgAnswers.setVisibility(View.GONE);
-        btnCheck.setVisibility(View.GONE);
-        btnBackToMenu.setVisibility(View.GONE);
+        contentLayout.setVisibility(View.GONE);
         progressBar.setVisibility(View.VISIBLE);
 
         loadQuestionsFromFirebase();
 
-        // Обработчик кнопки Check
         btnCheck.setOnClickListener(v -> checkAnswer());
 
-        // Обработчик кнопки "В меню" (после завершения теста)
         btnBackToMenu.setOnClickListener(v -> requireActivity().getSupportFragmentManager()
                 .popBackStack());
 
-        // Обработчик кнопки Back (в любое время)
         btnBack.setOnClickListener(v -> requireActivity().getSupportFragmentManager()
                 .popBackStack());
 
@@ -118,24 +114,21 @@ public class GrammarFragment extends Fragment {
                 }
 
                 progressBar.setVisibility(View.GONE);
+                contentLayout.setVisibility(View.VISIBLE);
 
                 if (!questions.isEmpty()) {
-                    tvQuestion.setVisibility(View.VISIBLE);
-                    rgAnswers.setVisibility(View.VISIBLE);
-                    btnCheck.setVisibility(View.VISIBLE);
-
                     currentQuestionIndex = 0;
                     score = 0;
                     displayQuestion(currentQuestionIndex);
                 } else {
                     tvQuestion.setText("Вопросы не найдены.");
-                    tvQuestion.setVisibility(View.VISIBLE);
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 progressBar.setVisibility(View.GONE);
+                contentLayout.setVisibility(View.VISIBLE);
                 Toast.makeText(getContext(),
                         "Ошибка загрузки: " + error.getMessage(),
                         Toast.LENGTH_SHORT).show();
@@ -157,6 +150,8 @@ public class GrammarFragment extends Fragment {
         for (String option : q.options) {
             RadioButton rb = new RadioButton(getContext());
             rb.setText(option);
+            rb.setTextSize(16f);
+            rb.setPadding(8, 12, 8, 12);
             rgAnswers.addView(rb);
         }
     }
@@ -204,39 +199,6 @@ public class GrammarFragment extends Fragment {
         rgAnswers.removeAllViews();
         btnCheck.setVisibility(View.GONE);
         btnBackToMenu.setVisibility(View.VISIBLE);
-
-        updateLessonsCompleted(); // <-- обновляем прогресс
-    }
-
-    private void updateLessonsCompleted() {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user == null) return;
-
-        String uid = user.getUid();
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-        db.collection("users").document(uid).get()
-                .addOnSuccessListener(documentSnapshot -> {
-                    if (documentSnapshot.exists()) {
-                        Map<String, Object> progress = (Map<String, Object>) documentSnapshot.get("progress");
-                        if (progress == null) progress = new HashMap<>();
-
-                        long lessonsCompleted = ((Number) progress.getOrDefault("lessonsCompleted", 0)).longValue();
-                        lessonsCompleted++; // прибавляем один пройденный урок
-
-                        Map<String, Object> updates = new HashMap<>();
-                        updates.put("progress.lessonsCompleted", lessonsCompleted);
-
-                        db.collection("users").document(uid)
-                                .update(updates)
-                                .addOnSuccessListener(aVoid -> {
-                                    Toast.makeText(getContext(), "Прогресс обновлён", Toast.LENGTH_SHORT).show();
-                                })
-                                .addOnFailureListener(e -> {
-                                    Toast.makeText(getContext(), "Ошибка обновления прогресса: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                                });
-                    }
-                });
     }
 
     static class Question {
