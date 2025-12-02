@@ -6,6 +6,16 @@
     android:background="?android:attr/colorBackground"
     android:padding="16dp">
 
+
+    <Button
+        android:id="@+id/backButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:text="← Back"
+        android:textColor="?attr/colorOnPrimary"
+        android:backgroundTint="?attr/colorPrimary"
+        android:layout_gravity="left"/>
 <LinearLayout
 android:layout_width="match_parent"
 android:layout_height="wrap_content"
@@ -53,14 +63,6 @@ android:layout_centerInParent="true">
     android:padding="8dp"
     android:textColor="?android:attr/textColorSecondary"/>
 
-<Button
-    android:id="@+id/backButton"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="15dp"
-    android:text="Назад"
-    android:textColor="?attr/colorOnPrimary"
-    android:backgroundTint="?attr/colorPrimary"/>
 
 </LinearLayout>
 
