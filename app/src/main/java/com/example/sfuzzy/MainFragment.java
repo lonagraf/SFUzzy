@@ -55,7 +55,7 @@ public class MainFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_main, container, false);
-        exitButton = view.findViewById(R.id.exitButton);
+        exitButton = view.findViewById(R.id.backButton);
         profileImage = view.findViewById(R.id.profileImage);
         userName = view.findViewById(R.id.userName);
         mail = view.findViewById(R.id.mail);
