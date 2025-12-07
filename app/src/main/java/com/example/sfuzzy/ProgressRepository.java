@@ -1,7 +1,10 @@
 package com.example.sfuzzy;
 
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
@@ -9,26 +12,31 @@ import java.util.Map;
 
 public class ProgressRepository {
 
-    private final FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+    private final FirebaseFirestore db;
+    private final FirebaseAuth auth;
+
+    public ProgressRepository() {
+        this.db = FirebaseFirestore.getInstance();
+        this.auth = FirebaseAuth.getInstance();
+    }
+
+    public ProgressRepository(FirebaseFirestore db, FirebaseAuth auth) {
+        this.db = db;
+        this.auth = auth;
+    }
 
     public void incrementLessonProgress() {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseUser user = auth.getCurrentUser();
         if (user == null) return;
 
         String uid = user.getUid();
 
-        firestore.collection("users").document(uid).get()
-                .addOnSuccessListener(doc -> {
-                    Map<String, Object> progress = (Map<String, Object>) doc.get("progress");
-                    if (progress == null) progress = new HashMap<>();
+        Map<String, Object> update = new HashMap<>();
+        update.put("progress.lessonsCompleted", FieldValue.increment(1));
 
-                    long lessonsCompleted = ((Number) progress.getOrDefault("lessonsCompleted", 0)).longValue();
-                    lessonsCompleted++;
-
-                    Map<String, Object> updates = new HashMap<>();
-                    updates.put("progress.lessonsCompleted", lessonsCompleted);
-
-                    firestore.collection("users").document(uid).update(updates);
-                });
+        db.collection("users")
+                .document(uid)
+                .update(update);
     }
 }
+
