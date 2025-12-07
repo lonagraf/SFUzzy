@@ -91,27 +91,15 @@ public class GrammarFragment extends Fragment {
     }
 
     private void loadQuestionsFromFirebase() {
-        DatabaseReference grammarRef = FirebaseDatabase.getInstance()
-                .getReference("topics")
-                .child(topicName)
-                .child("grammar");
+        DatabaseRepository repository = new DatabaseRepository();
 
-        grammarRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        repository.loadGrammar(topicName, new DatabaseRepository.GrammarCallback() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                questions.clear();
-
-                for (DataSnapshot qSnap : snapshot.getChildren()) {
-                    String questionText = qSnap.child("question").getValue(String.class);
-                    List<String> options = new ArrayList<>();
-                    for (DataSnapshot optSnap : qSnap.child("options").getChildren()) {
-                        options.add(optSnap.getValue(String.class));
-                    }
-                    String correct = qSnap.child("answer").getValue(String.class);
-                    questions.add(new Question(questionText, options, correct));
-                }
-
+            public void onSuccess(List<Question> loadedQuestions) {
                 progressBar.setVisibility(View.GONE);
+
+                questions.clear();
+                questions.addAll(loadedQuestions);
 
                 if (!questions.isEmpty()) {
                     tvQuestion.setVisibility(View.VISIBLE);
@@ -120,21 +108,21 @@ public class GrammarFragment extends Fragment {
 
                     currentQuestionIndex = 0;
                     score = 0;
+
                     displayQuestion(currentQuestionIndex);
                 } else {
-                    tvQuestion.setText("Вопросы не найдены.");
+                    tvQuestion.setText("Вопросы отсутствуют.");
                     tvQuestion.setVisibility(View.VISIBLE);
                 }
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
+            public void onError(String error) {
                 progressBar.setVisibility(View.GONE);
-                Toast.makeText(getContext(),
-                        "Ошибка загрузки: " + error.getMessage(),
-                        Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Ошибка загрузки: " + error, Toast.LENGTH_SHORT).show();
             }
         });
+
     }
 
     private void displayQuestion(int index) {
@@ -199,39 +187,9 @@ public class GrammarFragment extends Fragment {
         btnCheck.setVisibility(View.GONE);
         btnBackToMenu.setVisibility(View.VISIBLE);
 
-        updateLessonsCompleted(); // <-- обновляем прогресс
+        new ProgressRepository().incrementLessonProgress();
     }
 
-    private void updateLessonsCompleted() {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user == null) return;
-
-        String uid = user.getUid();
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-        db.collection("users").document(uid).get()
-                .addOnSuccessListener(documentSnapshot -> {
-                    if (documentSnapshot.exists()) {
-                        Map<String, Object> progress = (Map<String, Object>) documentSnapshot.get("progress");
-                        if (progress == null) progress = new HashMap<>();
-
-                        long lessonsCompleted = ((Number) progress.getOrDefault("lessonsCompleted", 0)).longValue();
-                        lessonsCompleted++; // прибавляем один пройденный урок
-
-                        Map<String, Object> updates = new HashMap<>();
-                        updates.put("progress.lessonsCompleted", lessonsCompleted);
-
-                        db.collection("users").document(uid)
-                                .update(updates)
-                                .addOnSuccessListener(aVoid -> {
-                                    Toast.makeText(getContext(), "Прогресс обновлён", Toast.LENGTH_SHORT).show();
-                                })
-                                .addOnFailureListener(e -> {
-                                    Toast.makeText(getContext(), "Ошибка обновления прогресса: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                                });
-                    }
-                });
-    }
 
 
     static class Question {

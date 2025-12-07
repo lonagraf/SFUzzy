@@ -78,68 +78,25 @@ public class TheoryFragment extends Fragment {
     }
 
     private void loadTheoryFromRealtimeDatabase() {
-        DatabaseReference databaseRef = FirebaseDatabase.getInstance()
-                .getReference("topics")
-                .child(topicName)
-                .child("theory");
+        DatabaseRepository repository = new DatabaseRepository();
 
-        databaseRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        repository.loadTheory(topicName, new DatabaseRepository.TheoryCallback() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                // Скрываем ProgressBar, показываем контент
+            public void onSuccess(String theoryHtml) {
                 progressBar.setVisibility(View.GONE);
-                if (scrollView != null) {
-                    scrollView.setVisibility(View.VISIBLE);
-                }
+                scrollView.setVisibility(View.VISIBLE);
+                tvTheoryContent.setText(Html.fromHtml(theoryHtml, Html.FROM_HTML_MODE_LEGACY));
 
-                String theoryText = snapshot.getValue(String.class);
-                if (theoryText != null && !theoryText.isEmpty()) {
-                    tvTheoryContent.setText(Html.fromHtml(theoryText, Html.FROM_HTML_MODE_LEGACY));
-                    updateProgress(); // Обновляем прогресс после прочтения теории
-                } else {
-                    tvTheoryContent.setText("Теория пока не добавлена");
-                }
+                new ProgressRepository().incrementLessonProgress();
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
+            public void onError(String error) {
                 progressBar.setVisibility(View.GONE);
-                if (scrollView != null) {
-                    scrollView.setVisibility(View.VISIBLE);
-                }
-                tvTheoryContent.setText("Ошибка загрузки теории: " + error.getMessage());
+                scrollView.setVisibility(View.VISIBLE);
+                tvTheoryContent.setText("Ошибка" + error);
             }
         });
     }
 
-    private void updateProgress() {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user == null) return;
-
-        String uid = user.getUid();
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-        db.collection("users").document(uid).get()
-                .addOnSuccessListener(documentSnapshot -> {
-                    if (documentSnapshot.exists()) {
-                        Map<String, Object> progress = (Map<String, Object>) documentSnapshot.get("progress");
-                        if (progress == null) progress = new HashMap<>();
-
-                        long lessonsCompleted = ((Number) progress.getOrDefault("lessonsCompleted", 0)).longValue();
-                        lessonsCompleted++; // прибавляем один пройденный урок
-
-                        Map<String, Object> updates = new HashMap<>();
-                        updates.put("progress.lessonsCompleted", lessonsCompleted);
-
-                        db.collection("users").document(uid)
-                                .update(updates)
-                                .addOnSuccessListener(aVoid -> {
-                                    // Можно показать Toast или оставить без уведомления
-                                })
-                                .addOnFailureListener(e -> {
-                                    // Логируем ошибку
-                                });
-                    }
-                });
-    }
 }

@@ -39,12 +39,6 @@ public class WordsFragment extends Fragment {
     private EditText inputField;
     private Button submitButton, backButton;
 
-    private FirebaseDatabase db = FirebaseDatabase.getInstance("https://sfuzzy-93892-default-rtdb.asia-southeast1.firebasedatabase.app/");
-    private DatabaseReference dbRef;
-
-    private FirebaseAuth mAuth;
-    private FirebaseFirestore firestore;
-
     public static WordsFragment newInstance(String topicName) {
         WordsFragment fragment = new WordsFragment();
         Bundle args = new Bundle();
@@ -59,8 +53,6 @@ public class WordsFragment extends Fragment {
         if (getArguments() != null) {
             topicName = getArguments().getString(ARG_TOPIC_NAME);
         }
-        mAuth = FirebaseAuth.getInstance();
-        firestore = FirebaseFirestore.getInstance();
     }
 
     @Nullable
@@ -77,38 +69,26 @@ public class WordsFragment extends Fragment {
 
         backButton.setOnClickListener(v -> getParentFragmentManager().popBackStack());
 
-        dbRef = db.getReference("topics").child(topicName).child("words");
+        DatabaseRepository repository = new DatabaseRepository();
 
-        dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        repository.loadWords(topicName, new DatabaseRepository.WordsCallback() {
             @Override
-            public void onDataChange(DataSnapshot snapshot) {
+            public void onSuccess(Map<String, String> words) {
                 wordMap.clear();
+                wordMap.putAll(words);
+
                 englishWords.clear();
-
-                for (DataSnapshot wordSnap : snapshot.getChildren()) {
-                    String englishWord = wordSnap.getKey();
-                    List<String> translations = new ArrayList<>();
-
-                    for (DataSnapshot t : wordSnap.getChildren()) {
-                        String tr = t.getValue(String.class);
-                        if (tr != null) translations.add(tr);
-                    }
-
-                    if (englishWord != null && !translations.isEmpty()) {
-                        wordMap.put(englishWord, String.join(", ", translations));
-                    }
-                }
-
                 englishWords.addAll(wordMap.keySet());
+
                 Collections.shuffle(englishWords);
                 currentIndex = 0;
+
                 loadNextWord();
             }
 
-
             @Override
-            public void onCancelled(DatabaseError error) {
-                feedbackLabel.setText("Ошибка загрузки: " + error.getMessage());
+            public void onError(String error) {
+                feedbackLabel.setText("Ошибка загрузки: " + error);
             }
         });
 
@@ -135,7 +115,7 @@ public class WordsFragment extends Fragment {
             inputField.setEnabled(false);
             submitButton.setEnabled(false);
             feedbackLabel.setText("Вы завершили все слова! (" + englishWords.size() + " слов)");
-            updateProgress(); // обновляем прогресс один раз
+            new ProgressRepository().incrementLessonProgress();
         }
     }
 
@@ -167,21 +147,5 @@ public class WordsFragment extends Fragment {
         }
     }
 
-    private void updateProgress() {
-        FirebaseUser user = mAuth.getCurrentUser();
-        if (user == null) return;
-
-        String uid = user.getUid();
-        firestore.collection("users").document(uid).get().addOnSuccessListener(doc -> {
-            Map<String, Object> progress = (Map<String, Object>) doc.get("progress");
-            if (progress == null) progress = new HashMap<>();
-            long lessonsCompleted = ((Number) progress.getOrDefault("lessonsCompleted", 0)).longValue();
-            lessonsCompleted++; // увеличиваем на 1
-            progress.put("lessonsCompleted", lessonsCompleted);
-            firestore.collection("users").document(uid)
-                    .update("progress", progress)
-                    .addOnFailureListener(e -> System.out.println("Ошибка обновления прогресса: " + e.getMessage()));
-        });
-    }
 
 }
