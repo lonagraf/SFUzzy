@@ -1,6 +1,5 @@
 package com.example.sfuzzy;
 
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -30,13 +29,12 @@ public class ProgressRepository {
         if (user == null) return;
 
         String uid = user.getUid();
+        if (uid == null || uid.isEmpty()) return;  // безопасная проверка
 
         Map<String, Object> update = new HashMap<>();
         update.put("progress.lessonsCompleted", FieldValue.increment(1));
 
-        db.collection("users")
-                .document(uid)
-                .update(update);
+        DocumentReference docRef = db.collection("users").document(uid);
+        docRef.update(update);
     }
 }
-
