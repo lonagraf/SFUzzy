@@ -27,6 +27,16 @@ android {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
     }
+    testOptions {
+        unitTests.all {
+            // Подробный вывод в консоль
+            testLogging {
+                events "passed", "skipped", "failed", "standardOut", "standardError"
+                exceptionFormat "full"
+                showStandardStreams true
+            }
+        }
+    }
 }
 
 dependencies {
@@ -46,10 +56,8 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:5.0.5'
     implementation 'com.google.firebase:firebase-auth:22.3.0'
 
-    // Google Sign-In
     implementation 'com.google.android.gms:play-services-auth:20.7.0'
 
-    // Firebase BoM (рекомендуется)
     implementation platform('com.google.firebase:firebase-bom:32.6.0')
     implementation 'com.google.firebase:firebase-auth'
 

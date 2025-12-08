@@ -103,6 +103,30 @@ public class DatabaseRepositoryTest {
         });
     }
 
+    // Новый тест: пустой snapshot
+    @Test
+    public void loadTheory_emptySnapshot_callsOnError() {
+        when(mockSnapshot.getValue(String.class)).thenReturn(null);
+
+        doAnswer(invocation -> {
+            ValueEventListener listener = invocation.getArgument(0);
+            listener.onDataChange(mockSnapshot);
+            return null;
+        }).when(mockRef).addListenerForSingleValueEvent(any(ValueEventListener.class));
+
+        repository.loadTheory("topic1", new DatabaseRepository.TheoryCallback() {
+            @Override
+            public void onSuccess(String theoryHtml) {
+                fail("Не должно вызываться onSuccess");
+            }
+
+            @Override
+            public void onError(String error) {
+                assertEquals("Теория отсутствует", error);
+            }
+        });
+    }
+
     //================ loadWords =================
     @Test
     public void loadWords_success_callsOnSuccess() {
@@ -112,6 +136,63 @@ public class DatabaseRepositoryTest {
         when(wordSnap.getKey()).thenReturn("apple");
         when(wordSnap.getChildren()).thenReturn(Collections.singletonList(trSnap));
         when(trSnap.getValue(String.class)).thenReturn("яблоко");
+        when(mockSnapshot.getChildren()).thenReturn(Collections.singletonList(wordSnap));
+
+        doAnswer(invocation -> {
+            ValueEventListener listener = invocation.getArgument(0);
+            listener.onDataChange(mockSnapshot);
+            return null;
+        }).when(mockRef).addListenerForSingleValueEvent(any(ValueEventListener.class));
+
+        repository.loadWords("topic1", new DatabaseRepository.WordsCallback() {
+            @Override
+            public void onSuccess(Map<String, String> words) {
+                assertEquals(1, words.size());
+                assertEquals("яблоко", words.get("apple"));
+            }
+
+            @Override
+            public void onError(String error) {
+                fail("Не должно вызываться onError");
+            }
+        });
+    }
+
+    // Новый тест: пустой snapshot
+    @Test
+    public void loadWords_emptySnapshot_callsOnSuccessWithEmptyMap() {
+        when(mockSnapshot.getChildren()).thenReturn(Collections.emptyList());
+
+        doAnswer(invocation -> {
+            ValueEventListener listener = invocation.getArgument(0);
+            listener.onDataChange(mockSnapshot);
+            return null;
+        }).when(mockRef).addListenerForSingleValueEvent(any(ValueEventListener.class));
+
+        repository.loadWords("topic1", new DatabaseRepository.WordsCallback() {
+            @Override
+            public void onSuccess(Map<String, String> words) {
+                assertTrue(words.isEmpty());
+            }
+
+            @Override
+            public void onError(String error) {
+                fail("Не должно вызываться onError");
+            }
+        });
+    }
+
+    // Новый тест: null перевод
+    @Test
+    public void loadWords_partialNullTranslation_skipsNulls() {
+        DataSnapshot wordSnap = mock(DataSnapshot.class);
+        DataSnapshot tr1 = mock(DataSnapshot.class);
+        DataSnapshot tr2 = mock(DataSnapshot.class);
+
+        when(wordSnap.getKey()).thenReturn("apple");
+        when(wordSnap.getChildren()).thenReturn(Arrays.asList(tr1, tr2));
+        when(tr1.getValue(String.class)).thenReturn("яблоко");
+        when(tr2.getValue(String.class)).thenReturn(null); // null перевод
         when(mockSnapshot.getChildren()).thenReturn(Collections.singletonList(wordSnap));
 
         doAnswer(invocation -> {
@@ -174,6 +255,30 @@ public class DatabaseRepositoryTest {
                 assertEquals("Опция1", questions.get(0).correctAnswer);
                 assertEquals(1, questions.get(0).options.size());
                 assertEquals("Опция1", questions.get(0).options.get(0));
+            }
+
+            @Override
+            public void onError(String error) {
+                fail("Не должно вызываться onError");
+            }
+        });
+    }
+
+    // Новый тест: пустой snapshot
+    @Test
+    public void loadGrammar_emptySnapshot_callsOnSuccessWithEmptyList() {
+        when(mockSnapshot.getChildren()).thenReturn(Collections.emptyList());
+
+        doAnswer(invocation -> {
+            ValueEventListener listener = invocation.getArgument(0);
+            listener.onDataChange(mockSnapshot);
+            return null;
+        }).when(mockRef).addListenerForSingleValueEvent(any(ValueEventListener.class));
+
+        repository.loadGrammar("topic1", new DatabaseRepository.GrammarCallback() {
+            @Override
+            public void onSuccess(List<GrammarFragment.Question> questions) {
+                assertTrue(questions.isEmpty());
             }
 
             @Override
