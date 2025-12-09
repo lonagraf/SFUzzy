@@ -93,47 +93,39 @@ public class GrammarFragment extends Fragment {
     }
 
     private void loadQuestionsFromFirebase() {
-        DatabaseReference grammarRef = FirebaseDatabase.getInstance()
-                .getReference("topics")
-                .child(topicName)
-                .child("grammar");
+        DatabaseRepository repository = new DatabaseRepository();
 
-        grammarRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        repository.loadGrammar(topicName, new DatabaseRepository.GrammarCallback() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                questions.clear();
-
-                for (DataSnapshot qSnap : snapshot.getChildren()) {
-                    String questionText = qSnap.child("question").getValue(String.class);
-                    List<String> options = new ArrayList<>();
-                    for (DataSnapshot optSnap : qSnap.child("options").getChildren()) {
-                        options.add(optSnap.getValue(String.class));
-                    }
-                    String correct = qSnap.child("answer").getValue(String.class);
-                    questions.add(new Question(questionText, options, correct));
-                }
-
+            public void onSuccess(List<Question> loadedQuestions) {
                 progressBar.setVisibility(View.GONE);
                 contentLayout.setVisibility(View.VISIBLE);
+
+                questions.clear();
+                questions.addAll(loadedQuestions);
 
                 if (!questions.isEmpty()) {
                     currentQuestionIndex = 0;
                     score = 0;
+
                     displayQuestion(currentQuestionIndex);
                 } else {
-                    tvQuestion.setText("Вопросы не найдены.");
+                    tvQuestion.setText("Вопросы отсутствуют.");
+                    tvQuestion.setVisibility(View.VISIBLE);
                 }
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
+            public void onError(String error) {
                 progressBar.setVisibility(View.GONE);
                 contentLayout.setVisibility(View.VISIBLE);
                 Toast.makeText(getContext(),
                         "Ошибка загрузки: " + error.getMessage(),
                         Toast.LENGTH_SHORT).show();
+
             }
         });
+
     }
 
     private void displayQuestion(int index) {
@@ -199,6 +191,8 @@ public class GrammarFragment extends Fragment {
         rgAnswers.removeAllViews();
         btnCheck.setVisibility(View.GONE);
         btnBackToMenu.setVisibility(View.VISIBLE);
+
+        new ProgressRepository().incrementLessonProgress();
     }
 
     static class Question {
