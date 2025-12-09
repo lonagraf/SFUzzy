@@ -16,13 +16,7 @@ import androidx.fragment.app.Fragment;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
-import com.google.firebase.firestore.SetOptions;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class ProfileFragment extends Fragment {
 
@@ -30,19 +24,22 @@ public class ProfileFragment extends Fragment {
     private Button btnLogout;
 
     private FirebaseAuth mAuth;
-    private FirebaseFirestore db;
+    private UserRepository userRepository;
     private ListenerRegistration progressListener;
 
     public ProfileFragment() {}
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
+    public View onCreateView(
+            @NonNull LayoutInflater inflater,
+            @Nullable ViewGroup container,
+            @Nullable Bundle savedInstanceState
+    ) {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
         mAuth = FirebaseAuth.getInstance();
-        db = FirebaseFirestore.getInstance();
+        userRepository = new UserRepository();
 
         tvEmail = view.findViewById(R.id.tvEmail);
         tvUserName = view.findViewById(R.id.tvUserName);
@@ -50,9 +47,10 @@ public class ProfileFragment extends Fragment {
         btnLogout = view.findViewById(R.id.btnLogout);
 
         FirebaseUser user = mAuth.getCurrentUser();
+
         if (user != null) {
             tvEmail.setText(user.getEmail());
-            loadOrCreateUserDocument(user);
+            loadUserData(user);
         } else {
             Toast.makeText(getContext(), "Пользователь не авторизован", Toast.LENGTH_SHORT).show();
         }
@@ -61,50 +59,40 @@ public class ProfileFragment extends Fragment {
         setupLogout();
 
         Button btnBack = view.findViewById(R.id.btnBack);
-        btnBack.setOnClickListener(v -> requireActivity().getSupportFragmentManager().popBackStack());
+        btnBack.setOnClickListener(v ->
+                requireActivity().getSupportFragmentManager().popBackStack()
+        );
 
         return view;
     }
 
-    private void loadOrCreateUserDocument(FirebaseUser user) {
-        String uid = user.getUid();
-
-        db.collection("users").document(uid).get()
-                .addOnSuccessListener(doc -> {
-                    if (!doc.exists()) {
-                        Map<String, Object> initData = new HashMap<>();
-                        initData.put("email", user.getEmail());
-                        initData.put("name", "");
-                        Map<String, Object> progress = new HashMap<>();
-                        progress.put("lessonsCompleted", 0);
-                        initData.put("progress", progress);
-                        db.collection("users").document(uid).set(initData, SetOptions.merge());
-                    }
-                    // Подписка на прогресс пользователя
-                    subscribeToProgressUpdates(uid);
-                    // Отображаем имя сразу
-                    String name = doc.getString("name");
-                    if (name != null && !name.isEmpty()) tvUserName.setText(name);
-                })
-                .addOnFailureListener(e -> Toast.makeText(getContext(), "Ошибка загрузки данных", Toast.LENGTH_SHORT).show());
-    }
-
-    private void subscribeToProgressUpdates(String uid) {
-        progressListener = db.collection("users").document(uid)
-                .addSnapshotListener((snapshot, error) -> {
-                    if (snapshot != null && snapshot.exists()) {
-                        DocumentSnapshot doc = snapshot;
-                        Map<String, Object> progress = null;
-                        Object obj = doc.get("progress");
-                        if (obj instanceof Map) {
-                            progress = (Map<String, Object>) obj;
-                        } else {
-                            progress = new HashMap<>();
+    private void loadUserData(FirebaseUser user) {
+        userRepository.loadOrCreateUser(
+                user.getUid(),
+                user.getEmail(),
+                new UserRepository.UserCallback() {
+                    @Override
+                    public void onLoaded(com.google.firebase.firestore.DocumentSnapshot doc) {
+                        String name = doc.getString("name");
+                        if (name != null && !name.isEmpty()) {
+                            tvUserName.setText(name);
                         }
-                        long lessons = ((Number) progress.getOrDefault("lessonsCompleted", 0)).longValue();
-                        tvLessons.setText("Lessons completed: " + lessons);
+
+                        // подписка на прогресс
+                        progressListener = userRepository.subscribeToProgress(
+                                user.getUid(),
+                                lessons -> tvLessons.setText("Lessons completed: " + lessons)
+                        );
                     }
-                });
+
+                    @Override
+                    public void onError(Exception e) {
+                        Toast.makeText(getContext(),
+                                "Ошибка загрузки данных",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                }
+        );
     }
 
     private void setupNameClick() {
@@ -115,7 +103,8 @@ public class ProfileFragment extends Fragment {
             new AlertDialog.Builder(requireContext())
                     .setTitle("Изменить имя")
                     .setView(editText)
-                    .setPositiveButton("Сохранить", (dialog, which) -> saveUserName(editText.getText().toString()))
+                    .setPositiveButton("Сохранить", (dialog, which) ->
+                            saveUserName(editText.getText().toString()))
                     .setNegativeButton("Отмена", null)
                     .show();
         });
@@ -123,24 +112,28 @@ public class ProfileFragment extends Fragment {
 
     private void saveUserName(String name) {
         FirebaseUser user = mAuth.getCurrentUser();
-        if (user != null && !name.trim().isEmpty()) {
-            String uid = user.getUid();
-            Map<String, Object> updates = new HashMap<>();
-            updates.put("name", name);
+        if (user == null) return;
 
-            db.collection("users").document(uid)
-                    .update(updates)
-                    .addOnSuccessListener(aVoid -> tvUserName.setText(name))
-                    .addOnFailureListener(e -> Toast.makeText(getContext(), "Ошибка при сохранении имени", Toast.LENGTH_SHORT).show());
-        } else {
-            Toast.makeText(getContext(), "Имя не может быть пустым", Toast.LENGTH_SHORT).show();
-        }
+        userRepository.updateUserName(
+                user.getUid(),
+                name,
+                success -> {
+                    if (success) {
+                        tvUserName.setText(name);
+                    } else {
+                        Toast.makeText(getContext(),
+                                "Ошибка при сохранении имени",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                }
+        );
     }
 
     private void setupLogout() {
         btnLogout.setOnClickListener(v -> {
             mAuth.signOut();
             if (progressListener != null) progressListener.remove();
+
             requireActivity().getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.fragment_container_view_tag, new LoginFragment())
@@ -151,7 +144,8 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        if (progressListener != null) progressListener.remove();
+        if (progressListener != null) {
+            progressListener.remove();
+        }
     }
-
 }
