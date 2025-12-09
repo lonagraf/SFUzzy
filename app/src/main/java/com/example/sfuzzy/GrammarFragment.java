@@ -120,7 +120,7 @@ public class GrammarFragment extends Fragment {
                 progressBar.setVisibility(View.GONE);
                 contentLayout.setVisibility(View.VISIBLE);
                 Toast.makeText(getContext(),
-                        "Ошибка загрузки: " + error.getMessage(),
+                        "Ошибка загрузки: ",
                         Toast.LENGTH_SHORT).show();
 
             }
