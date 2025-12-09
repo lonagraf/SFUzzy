@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -46,7 +47,7 @@ public class TopicDetailFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_topic_detail, container, false);
 
-        // UI elements
+
         TextView tvTitle = view.findViewById(R.id.tvTopicTitle);
         ImageView ivTopic = view.findViewById(R.id.ivTopicImage);
 
@@ -55,43 +56,23 @@ public class TopicDetailFragment extends Fragment {
         Button btnGrammar = view.findViewById(R.id.btnGrammar);
         Button btnBack = view.findViewById(R.id.btnBack);
 
-        // Set title & image
         tvTitle.setText(topicName);
         ivTopic.setImageResource(topicImageRes);
 
+        btnWords.setOnClickListener(v -> openFragment(WordsFragment.newInstance(topicName)));
+        btnTheory.setOnClickListener(v -> openFragment(TheoryFragment.newInstance(topicName)));
+        btnGrammar.setOnClickListener(v -> openFragment(GrammarFragment.newInstance(topicName)));
 
-        btnWords.setOnClickListener(v -> {
-            WordsFragment wordsFragment = WordsFragment.newInstance(topicName);
-            requireActivity().getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.fragment_container_view_tag, wordsFragment)
-                    .addToBackStack(null)
-                    .commit();
-        });
-
-        btnTheory.setOnClickListener(v -> {
-            TheoryFragment theoryFragment = TheoryFragment.newInstance(topicName);
-            requireActivity().getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.fragment_container_view_tag, theoryFragment)
-                    .addToBackStack(null)
-                    .commit();
-        });
-
-        btnGrammar.setOnClickListener(v -> {
-            GrammarFragment grammarFragment = GrammarFragment.newInstance(topicName);
-            requireActivity().getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.fragment_container_view_tag, grammarFragment)
-                    .addToBackStack(null)
-                    .commit();
-        });
-
-        // Back button
-        btnBack.setOnClickListener(v -> {
-            requireActivity().getSupportFragmentManager().popBackStack();
-        });
+        btnBack.setOnClickListener(v -> requireActivity().getSupportFragmentManager().popBackStack());
 
         return view;
+    }
+
+    private void openFragment(Fragment fragment) {
+        requireActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container_view_tag, fragment)
+                .addToBackStack(null)
+                .commit();
     }
 }
