@@ -7,28 +7,14 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.firestore.FirebaseFirestore;
-
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class GrammarFragment extends Fragment {
 
@@ -41,9 +27,24 @@ public class GrammarFragment extends Fragment {
     private ProgressBar progressBar;
     private LinearLayout contentLayout;
 
-    private List<Question> questions = new ArrayList<>();
-    private int currentQuestionIndex = 0;
-    private int score = 0;
+    private GrammarQuizManager quizManager;
+
+    // Вложенный класс Question - ДОЛЖЕН БЫТЬ public static
+    public static class Question {
+        public String question;
+        public List<String> options;
+        public String correctAnswer;
+
+        // Пустой конструктор для Firebase
+        public Question() {
+        }
+
+        public Question(String question, List<String> options, String correctAnswer) {
+            this.question = question;
+            this.options = options;
+            this.correctAnswer = correctAnswer;
+        }
+    }
 
     public static GrammarFragment newInstance(String topicName) {
         GrammarFragment fragment = new GrammarFragment();
@@ -76,12 +77,33 @@ public class GrammarFragment extends Fragment {
         progressBar = view.findViewById(R.id.progressBar);
         contentLayout = view.findViewById(R.id.contentLayout);
 
-        contentLayout.setVisibility(View.GONE);
-        progressBar.setVisibility(View.VISIBLE);
+        // Инициализация менеджера теста
+        quizManager = new GrammarQuizManager(requireContext(), new GrammarQuizManager.QuizCallback() {
+            @Override
+            public void onQuestionsLoaded(List<Question> questions) {
+                // Можно добавить дополнительную логику при загрузке
+            }
 
-        loadQuestionsFromFirebase();
+            @Override
+            public void onError(String error) {
+                tvQuestion.setText(error);
+                tvQuestion.setVisibility(View.VISIBLE);
+            }
 
-        btnCheck.setOnClickListener(v -> checkAnswer());
+            @Override
+            public void onQuizCompleted(int score, int total) {
+                btnCheck.setVisibility(View.GONE);
+                btnBackToMenu.setVisibility(View.VISIBLE);
+                new ProgressRepository().incrementLessonProgress();
+            }
+        });
+
+        quizManager.setupViews(tvQuestion, rgAnswers, progressBar, contentLayout);
+
+        // Загрузка вопросов
+        quizManager.loadQuestions(topicName);
+
+        btnCheck.setOnClickListener(v -> quizManager.checkAnswer());
 
         btnBackToMenu.setOnClickListener(v -> requireActivity().getSupportFragmentManager()
                 .popBackStack());
@@ -90,120 +112,5 @@ public class GrammarFragment extends Fragment {
                 .popBackStack());
 
         return view;
-    }
-
-    private void loadQuestionsFromFirebase() {
-        DatabaseRepository repository = new DatabaseRepository();
-
-        repository.loadGrammar(topicName, new DatabaseRepository.GrammarCallback() {
-            @Override
-            public void onSuccess(List<Question> loadedQuestions) {
-                progressBar.setVisibility(View.GONE);
-                contentLayout.setVisibility(View.VISIBLE);
-
-                questions.clear();
-                questions.addAll(loadedQuestions);
-
-                if (!questions.isEmpty()) {
-                    currentQuestionIndex = 0;
-                    score = 0;
-
-                    displayQuestion(currentQuestionIndex);
-                } else {
-                    tvQuestion.setText("Вопросы отсутствуют.");
-                    tvQuestion.setVisibility(View.VISIBLE);
-                }
-            }
-
-            @Override
-            public void onError(String error) {
-                progressBar.setVisibility(View.GONE);
-                contentLayout.setVisibility(View.VISIBLE);
-                Toast.makeText(getContext(),
-                        "Ошибка загрузки: ",
-                        Toast.LENGTH_SHORT).show();
-
-            }
-        });
-
-    }
-
-    private void displayQuestion(int index) {
-        if (index >= questions.size()) {
-            showFinalScore();
-            return;
-        }
-
-        Question q = questions.get(index);
-
-        tvQuestion.setText(q.question);
-        rgAnswers.removeAllViews();
-
-        for (String option : q.options) {
-            RadioButton rb = new RadioButton(getContext());
-            rb.setText(option);
-            rb.setTextSize(16f);
-            rb.setPadding(8, 12, 8, 12);
-            rgAnswers.addView(rb);
-        }
-    }
-
-    private void checkAnswer() {
-        int selectedId = rgAnswers.getCheckedRadioButtonId();
-
-        if (selectedId == -1) {
-            Toast.makeText(requireContext(), "Выберите вариант ответа", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        RadioButton rb = rgAnswers.findViewById(selectedId);
-        if (rb == null) {
-            Toast.makeText(requireContext(), "Ошибка выбора ответа", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        String chosen = rb.getText().toString();
-        Question q = questions.get(currentQuestionIndex);
-
-        if (chosen.equals(q.correctAnswer)) {
-            score++;
-            Toast.makeText(requireContext(), "Верно!", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(requireContext(),
-                    "Неверно. Правильный ответ: " + q.correctAnswer,
-                    Toast.LENGTH_SHORT).show();
-        }
-
-        currentQuestionIndex++;
-
-        if (currentQuestionIndex < questions.size()) {
-            displayQuestion(currentQuestionIndex);
-        } else {
-            showFinalScore();
-        }
-    }
-
-    private void showFinalScore() {
-        int total = questions.size();
-
-        tvQuestion.setText("Тест завершён!\n\nВаш результат: " + score + " из " + total);
-
-        rgAnswers.removeAllViews();
-        btnCheck.setVisibility(View.GONE);
-        btnBackToMenu.setVisibility(View.VISIBLE);
-
-        new ProgressRepository().incrementLessonProgress();
-    }
-
-    static class Question {
-        String question;
-        List<String> options;
-        String correctAnswer;
-
-        Question(String question, List<String> options, String correctAnswer) {
-            this.question = question;
-            this.options = options;
-            this.correctAnswer = correctAnswer;
-        }
     }
 }
