@@ -75,4 +75,5 @@ public class GoogleAuthManager {
     public void signOut() {
         googleSignInClient.signOut();
     }
-}
+
+    }

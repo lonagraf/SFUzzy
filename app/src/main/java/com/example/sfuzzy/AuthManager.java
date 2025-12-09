@@ -40,4 +40,7 @@ public class AuthManager {
         void onSuccess();
         void onError(String errorMessage);
     }
+    public AuthManager(FirebaseAuth auth) {
+        this.mAuth = auth;
+    }
 }
