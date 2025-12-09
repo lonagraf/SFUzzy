@@ -1,21 +1,41 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="?android:attr/colorBackground"
     android:padding="16dp">
 
+    <!-- Кнопка Back вверху слева -->
+    <Button
+        android:id="@+id/btnBack"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:text="← Back"
+        android:textColor="?attr/colorOnPrimary"
+        android:backgroundTint="?attr/colorPrimary"/>
+
+    <!-- Прогресс бар под кнопкой Back -->
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btnBack"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"
+        android:visibility="visible"
+        style="?android:attr/progressBarStyleLarge"/>
+
+    <!-- Основной контент по центру -->
     <LinearLayout
-        android:orientation="vertical"
+        android:id="@+id/contentLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:gravity="center_horizontal"
-        android:paddingTop="60dp">
-
-        <ProgressBar
-            android:id="@+id/progressBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="visible"
-            style="?android:attr/progressBarStyleLarge"/>
+        android:layout_centerInParent="true"
+        android:visibility="gone"
+        android:paddingTop="30dp">
 
         <TextView
             android:id="@+id/tvQuestion"
@@ -24,16 +44,18 @@
             android:textSize="18sp"
             android:textColor="?attr/colorOnBackground"
             android:paddingBottom="16dp"
-            android:gravity="center"
-            android:visibility="gone"/>
+            android:gravity="center"/>
 
+        <!-- RadioGroup с отступами слева и выравниванием по левому краю -->
         <RadioGroup
             android:id="@+id/rgAnswers"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="40dp"
+            android:layout_marginLeft="40dp"
+            android:layout_marginTop="16dp"
             android:gravity="start"
-            android:layout_gravity="center_horizontal"
-            android:visibility="gone"/>
+            android:orientation="vertical"/>
 
         <Button
             android:id="@+id/btnCheck"
@@ -42,9 +64,8 @@
             android:text="Проверить"
             android:layout_marginTop="24dp"
             android:layout_gravity="center_horizontal"
-            android:backgroundTint="@color/primary"
-            android:textColor="@android:color/white"
-            android:visibility="gone"/>
+            android:backgroundTint="?attr/colorPrimary"
+            android:textColor="?attr/colorOnPrimary"/>
 
         <Button
             android:id="@+id/btnBackToMenu"
@@ -54,8 +75,9 @@
             android:layout_marginTop="24dp"
             android:layout_gravity="center_horizontal"
             android:visibility="gone"
-            android:backgroundTint="@color/primary"
-            android:textColor="@android:color/white"/>
+            android:backgroundTint="?attr/colorPrimary"
+            android:textColor="?attr/colorOnPrimary"/>
 
     </LinearLayout>
-</ScrollView>
+
+</RelativeLayout>

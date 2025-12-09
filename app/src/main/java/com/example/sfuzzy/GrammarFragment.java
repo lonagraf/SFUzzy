@@ -5,10 +5,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,8 +37,9 @@ public class GrammarFragment extends Fragment {
 
     private TextView tvQuestion;
     private RadioGroup rgAnswers;
-    private Button btnCheck, btnBackToMenu;
+    private Button btnCheck, btnBackToMenu, btnBack;
     private ProgressBar progressBar;
+    private LinearLayout contentLayout;
 
     private List<Question> questions = new ArrayList<>();
     private int currentQuestionIndex = 0;
@@ -71,13 +72,11 @@ public class GrammarFragment extends Fragment {
         rgAnswers = view.findViewById(R.id.rgAnswers);
         btnCheck = view.findViewById(R.id.btnCheck);
         btnBackToMenu = view.findViewById(R.id.btnBackToMenu);
+        btnBack = view.findViewById(R.id.btnBack);
         progressBar = view.findViewById(R.id.progressBar);
+        contentLayout = view.findViewById(R.id.contentLayout);
 
-        // Скрываем вопросы и кнопку до загрузки
-        tvQuestion.setVisibility(View.GONE);
-        rgAnswers.setVisibility(View.GONE);
-        btnCheck.setVisibility(View.GONE);
-        btnBackToMenu.setVisibility(View.GONE);
+        contentLayout.setVisibility(View.GONE);
         progressBar.setVisibility(View.VISIBLE);
 
         loadQuestionsFromFirebase();
@@ -85,6 +84,9 @@ public class GrammarFragment extends Fragment {
         btnCheck.setOnClickListener(v -> checkAnswer());
 
         btnBackToMenu.setOnClickListener(v -> requireActivity().getSupportFragmentManager()
+                .popBackStack());
+
+        btnBack.setOnClickListener(v -> requireActivity().getSupportFragmentManager()
                 .popBackStack());
 
         return view;
@@ -97,15 +99,12 @@ public class GrammarFragment extends Fragment {
             @Override
             public void onSuccess(List<Question> loadedQuestions) {
                 progressBar.setVisibility(View.GONE);
+                contentLayout.setVisibility(View.VISIBLE);
 
                 questions.clear();
                 questions.addAll(loadedQuestions);
 
                 if (!questions.isEmpty()) {
-                    tvQuestion.setVisibility(View.VISIBLE);
-                    rgAnswers.setVisibility(View.VISIBLE);
-                    btnCheck.setVisibility(View.VISIBLE);
-
                     currentQuestionIndex = 0;
                     score = 0;
 
@@ -119,7 +118,11 @@ public class GrammarFragment extends Fragment {
             @Override
             public void onError(String error) {
                 progressBar.setVisibility(View.GONE);
-                Toast.makeText(getContext(), "Ошибка загрузки: " + error, Toast.LENGTH_SHORT).show();
+                contentLayout.setVisibility(View.VISIBLE);
+                Toast.makeText(getContext(),
+                        "Ошибка загрузки: " + error.getMessage(),
+                        Toast.LENGTH_SHORT).show();
+
             }
         });
 
@@ -139,6 +142,8 @@ public class GrammarFragment extends Fragment {
         for (String option : q.options) {
             RadioButton rb = new RadioButton(getContext());
             rb.setText(option);
+            rb.setTextSize(16f);
+            rb.setPadding(8, 12, 8, 12);
             rgAnswers.addView(rb);
         }
     }
@@ -189,8 +194,6 @@ public class GrammarFragment extends Fragment {
 
         new ProgressRepository().incrementLessonProgress();
     }
-
-
 
     static class Question {
         String question;
