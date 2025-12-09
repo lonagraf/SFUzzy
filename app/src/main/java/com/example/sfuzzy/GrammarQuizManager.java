@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,11 +19,12 @@ public class GrammarQuizManager {
         void onQuizCompleted(int score, int total);
     }
 
-    private Context context;
+    private final Context context;
+    private final QuizCallback callback;
+
     private List<GrammarFragment.Question> questions;
     private int currentQuestionIndex = 0;
     private int score = 0;
-    private QuizCallback callback;
 
     private TextView tvQuestion;
     private RadioGroup rgAnswers;
@@ -53,7 +55,7 @@ public class GrammarQuizManager {
         showLoading(true);
 
         DatabaseRepository repository = new DatabaseRepository();
-        repository.loadGrammar(topicName, new DatabaseRepository.GrammarCallback() { // ← исправлено здесь
+        repository.loadGrammar(topicName, new DatabaseRepository.GrammarCallback() {
             @Override
             public void onSuccess(List<GrammarFragment.Question> loadedQuestions) {
                 showLoading(false);
@@ -61,10 +63,14 @@ public class GrammarQuizManager {
                 isLoaded = true;
                 currentQuestionIndex = 0;
                 score = 0;
-                callback.onQuestionsLoaded(loadedQuestions);
-                if (!loadedQuestions.isEmpty()) {
-                    displayQuestion(currentQuestionIndex);
+
+                if (questions == null || questions.isEmpty()) {
+                    callback.onError("Вопросы отсутствуют");
+                    return;
                 }
+
+                callback.onQuestionsLoaded(loadedQuestions);
+                displayQuestion(currentQuestionIndex);
             }
 
             @Override
@@ -87,8 +93,14 @@ public class GrammarQuizManager {
             return;
         }
 
+        RadioButton rb = rgAnswers.findViewById(selectedId);
+        if (rb == null) {  // защитная проверка
+            Toast.makeText(context, "Ошибка выбора ответа", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String chosen = rb.getText().toString();
         GrammarFragment.Question currentQuestion = questions.get(currentQuestionIndex);
-        String chosen = ((android.widget.RadioButton) rgAnswers.findViewById(selectedId)).getText().toString();
 
         if (chosen.equals(currentQuestion.correctAnswer)) {
             score++;
@@ -108,17 +120,19 @@ public class GrammarQuizManager {
     }
 
     private void displayQuestion(int index) {
-        if (index >= questions.size()) {
+        if (questions == null || index >= questions.size()) {
             completeQuiz();
             return;
         }
 
         GrammarFragment.Question q = questions.get(index);
         tvQuestion.setText(q.question);
+
         rgAnswers.removeAllViews();
+        rgAnswers.clearCheck();  // 🔹 сбрасываем выбор перед новым вопросом
 
         for (String option : q.options) {
-            android.widget.RadioButton rb = new android.widget.RadioButton(context);
+            RadioButton rb = new RadioButton(context);
             rb.setText(option);
             rb.setTextSize(16f);
             rb.setPadding(8, 12, 8, 12);
@@ -127,7 +141,7 @@ public class GrammarQuizManager {
     }
 
     private void completeQuiz() {
-        int total = questions.size();
+        int total = questions != null ? questions.size() : 0;
         tvQuestion.setText("Тест завершён!\n\nВаш результат: " + score + " из " + total);
         rgAnswers.removeAllViews();
         callback.onQuizCompleted(score, total);
@@ -141,7 +155,7 @@ public class GrammarQuizManager {
     }
 
     public boolean hasNextQuestion() {
-        return isLoaded && currentQuestionIndex < questions.size();
+        return isLoaded && questions != null && currentQuestionIndex < questions.size();
     }
 
     public void reset() {
