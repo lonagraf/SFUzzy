@@ -1,5 +1,6 @@
 package com.example.sfuzzy;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.View;
 import android.widget.EditText;
@@ -23,11 +24,11 @@ public class WordsQuizManager {
         void onQuizCompleted(int totalWords);
     }
 
-    private Context context;
-    private Map<String, String> wordMap = new LinkedHashMap<>();
-    private List<String> englishWords = new ArrayList<>();
+    private final Context context;
+    private final Map<String, String> wordMap = new LinkedHashMap<>();
+    private final List<String> englishWords = new ArrayList<>();
     private int currentIndex = 0;
-    private WordsQuizCallback callback;
+    private final WordsQuizCallback callback;
 
     private TextView wordLabel, feedbackLabel;
     private EditText inputField;
@@ -90,6 +91,7 @@ public class WordsQuizManager {
         });
     }
 
+    @SuppressLint("SetTextI18n")
     public void checkTranslation() {
         if (!isLoaded || englishWords.isEmpty()) {
             Toast.makeText(context, "Слова не загружены", Toast.LENGTH_SHORT).show();
@@ -134,6 +136,7 @@ public class WordsQuizManager {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private void loadNextWord() {
         if (currentIndex < englishWords.size()) {
             String word = englishWords.get(currentIndex);
@@ -146,6 +149,7 @@ public class WordsQuizManager {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private void completeQuiz() {
         int total = englishWords.size();
         wordLabel.setText("Поздравляем! Все слова пройдены!");

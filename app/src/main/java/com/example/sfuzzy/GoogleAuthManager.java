@@ -3,7 +3,6 @@ package com.example.sfuzzy;
 import android.content.Context;
 import android.content.Intent;
 
-import androidx.activity.result.ActivityResultLauncher;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -16,6 +15,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
+import java.util.Objects;
+
 public class GoogleAuthManager {
 
     public interface GoogleAuthCallback {
@@ -25,10 +26,9 @@ public class GoogleAuthManager {
 
     private final FirebaseAuth mAuth;
     private final GoogleSignInClient googleSignInClient;
-    private final Context context;
+
 
     public GoogleAuthManager(Context context, String clientId) {
-        this.context = context;
         this.mAuth = FirebaseAuth.getInstance();
 
         GoogleSignInOptions options = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -66,14 +66,11 @@ public class GoogleAuthManager {
                 }
             } else {
                 if (callback != null) {
-                    callback.onError("Failed: " + task.getException().getMessage());
+                    callback.onError("Failed: " + Objects.requireNonNull(task.getException()).getMessage());
                 }
             }
         });
     }
 
-    public void signOut() {
-        googleSignInClient.signOut();
-    }
 
     }

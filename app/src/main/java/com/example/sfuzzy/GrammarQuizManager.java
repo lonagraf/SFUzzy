@@ -1,5 +1,6 @@
 package com.example.sfuzzy;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -140,6 +141,7 @@ public class GrammarQuizManager {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private void completeQuiz() {
         int total = questions != null ? questions.size() : 0;
         tvQuestion.setText("Тест завершён!\n\nВаш результат: " + score + " из " + total);

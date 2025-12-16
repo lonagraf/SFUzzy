@@ -1,5 +1,6 @@
 package com.example.sfuzzy;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,7 +21,8 @@ import com.google.firebase.firestore.ListenerRegistration;
 
 public class ProfileFragment extends Fragment {
 
-    private TextView tvEmail, tvUserName, tvLessons;
+    private TextView tvUserName;
+    private TextView tvLessons;
     private Button btnLogout;
 
     private FirebaseAuth mAuth;
@@ -41,7 +43,7 @@ public class ProfileFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         userRepository = new UserRepository();
 
-        tvEmail = view.findViewById(R.id.tvEmail);
+        TextView tvEmail = view.findViewById(R.id.tvEmail);
         tvUserName = view.findViewById(R.id.tvUserName);
         tvLessons = view.findViewById(R.id.tvStat1);
         btnLogout = view.findViewById(R.id.btnLogout);
@@ -71,6 +73,7 @@ public class ProfileFragment extends Fragment {
                 user.getUid(),
                 user.getEmail(),
                 new UserRepository.UserCallback() {
+                    @SuppressLint("SetTextI18n")
                     @Override
                     public void onLoaded(com.google.firebase.firestore.DocumentSnapshot doc) {
                         String name = doc.getString("name");

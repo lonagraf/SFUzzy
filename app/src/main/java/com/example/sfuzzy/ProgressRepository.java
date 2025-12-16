@@ -29,7 +29,7 @@ public class ProgressRepository {
         if (user == null) return;
 
         String uid = user.getUid();
-        if (uid == null || uid.isEmpty()) return;  // безопасная проверка
+        if (uid.isEmpty()) return;  // безопасная проверка
 
         Map<String, Object> update = new HashMap<>();
         update.put("progress.lessonsCompleted", FieldValue.increment(1));

@@ -1,5 +1,6 @@
 package com.example.sfuzzy;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,11 +22,9 @@ public class WordsFragment extends Fragment {
     private static final String ARG_TOPIC_NAME = "topic_name";
     private String topicName;
 
-    private TextView wordLabel, feedbackLabel;
+    private TextView feedbackLabel;
     private EditText inputField;
-    private Button submitButton, backButton;
-    private ProgressBar progressBar;
-    private LinearLayout contentLayout;
+    private Button submitButton;
 
     private WordsQuizManager quizManager;
 
@@ -52,13 +51,13 @@ public class WordsFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_words, container, false);
 
-        wordLabel = view.findViewById(R.id.wordLabel);
+        TextView wordLabel = view.findViewById(R.id.wordLabel);
         inputField = view.findViewById(R.id.inputField);
         submitButton = view.findViewById(R.id.submitButton);
-        backButton = view.findViewById(R.id.backButton);
+        Button backButton = view.findViewById(R.id.backButton);
         feedbackLabel = view.findViewById(R.id.feedbackLabel);
-        progressBar = view.findViewById(R.id.progressBar);
-        contentLayout = view.findViewById(R.id.contentLayout);
+        ProgressBar progressBar = view.findViewById(R.id.progressBar);
+        LinearLayout contentLayout = view.findViewById(R.id.contentLayout);
 
         // Инициализация менеджера
         quizManager = new WordsQuizManager(requireContext(), new WordsQuizManager.WordsQuizCallback() {
@@ -67,6 +66,7 @@ public class WordsFragment extends Fragment {
                 // Можно добавить дополнительную логику
             }
 
+            @SuppressLint("SetTextI18n")
             @Override
             public void onError(String error) {
                 feedbackLabel.setText("Ошибка загрузки: " + error);

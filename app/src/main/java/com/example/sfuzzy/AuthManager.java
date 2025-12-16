@@ -1,6 +1,5 @@
 package com.example.sfuzzy;
 
-import android.content.Context;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class AuthManager {

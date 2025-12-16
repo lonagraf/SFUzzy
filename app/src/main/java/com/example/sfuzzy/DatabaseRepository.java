@@ -1,5 +1,7 @@
 package com.example.sfuzzy;
 
+import androidx.annotation.NonNull;
+
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -46,7 +48,7 @@ public class DatabaseRepository {
         DatabaseReference ref = db.getReference("topics").child(topicName).child("theory");
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot snapshot) {
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
                 String theory = snapshot.getValue(String.class);
                 if (theory != null) {
                     callback.onSuccess(theory);
@@ -56,7 +58,7 @@ public class DatabaseRepository {
             }
 
             @Override
-            public void onCancelled(DatabaseError error) {
+            public void onCancelled(@NonNull DatabaseError error) {
                 callback.onError(error.getMessage());
             }
         });
@@ -66,7 +68,7 @@ public class DatabaseRepository {
         DatabaseReference ref = db.getReference("topics").child(topicName).child("words");
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot snapshot) {
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
                 Map<String, String> wordMap = new LinkedHashMap<>();
                 for (DataSnapshot wordSnap : snapshot.getChildren()) {
                     String englishWord = wordSnap.getKey();
@@ -83,7 +85,7 @@ public class DatabaseRepository {
             }
 
             @Override
-            public void onCancelled(DatabaseError error) {
+            public void onCancelled(@NonNull DatabaseError error) {
                 callback.onError(error.getMessage());
             }
         });
@@ -93,7 +95,7 @@ public class DatabaseRepository {
         DatabaseReference ref = db.getReference("topics").child(topicName).child("grammar");
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot snapshot) {
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
                 List<GrammarFragment.Question> questions = new ArrayList<>();
                 for (DataSnapshot qSnap : snapshot.getChildren()) {
                     String questionText = qSnap.child("question").getValue(String.class);
@@ -108,7 +110,7 @@ public class DatabaseRepository {
             }
 
             @Override
-            public void onCancelled(DatabaseError error) {
+            public void onCancelled(@NonNull DatabaseError error) {
                 callback.onError(error.getMessage());
             }
         });

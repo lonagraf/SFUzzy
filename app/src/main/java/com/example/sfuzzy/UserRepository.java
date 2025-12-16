@@ -6,6 +6,7 @@ import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.SetOptions;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class UserRepository {
 
@@ -19,10 +20,6 @@ public class UserRepository {
     // Конструктор для тестов
     public UserRepository(FirebaseFirestore db) {
         this.db = db;
-    }
-
-    public FirebaseFirestore getDb() {
-        return db;
     }
 
     // Загружает документ пользователя или создаёт, если его нет
@@ -57,7 +54,7 @@ public class UserRepository {
                         } else {
                             progress = new HashMap<>();
                         }
-                        long lessons = ((Number) progress.getOrDefault("lessonsCompleted", 0)).longValue();
+                        long lessons = ((Number) Objects.requireNonNull(progress.getOrDefault("lessonsCompleted", 0))).longValue();
                         callback.onProgress(lessons);
                     }
                 });

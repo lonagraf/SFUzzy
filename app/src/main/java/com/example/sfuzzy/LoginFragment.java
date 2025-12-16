@@ -16,7 +16,6 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -24,14 +23,13 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class LoginFragment extends Fragment {
 
-    private TextView register;
     private EditText emailText, passwordText;
     private FirebaseAuth mAuth;
     private GoogleAuthManager googleAuthManager;
 
     private final ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
-            new ActivityResultCallback<ActivityResult>() {
+            new ActivityResultCallback<>() {
                 @Override
                 public void onActivityResult(ActivityResult result) {
                     if (result.getResultCode() == RESULT_OK) {
@@ -82,7 +80,7 @@ public class LoginFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_login, container, false);
 
-        register = view.findViewById(R.id.register);
+        TextView register = view.findViewById(R.id.register);
         emailText = view.findViewById(R.id.loginEmail);
         passwordText = view.findViewById(R.id.loginPassword);
         Button loginBtn = view.findViewById(R.id.loginBtn);
@@ -94,54 +92,44 @@ public class LoginFragment extends Fragment {
                 getString(R.string.client_id)
         );
 
-        register.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AuthNavigator.navigateToFragment(
-                        requireActivity(),
-                        new RegisterFragment(),
-                        R.id.fragment_container_view_tag
-                );
+        register.setOnClickListener(v -> AuthNavigator.navigateToFragment(
+                requireActivity(),
+                new RegisterFragment(),
+                R.id.fragment_container_view_tag
+        ));
+
+        loginBtn.setOnClickListener(view1 -> {
+            String email = emailText.getText().toString();
+            String password = passwordText.getText().toString();
+
+            if (email.isEmpty()) {
+                Toast.makeText(requireContext(), "Enter email", Toast.LENGTH_SHORT).show();
+                return;
             }
+            if (password.isEmpty()) {
+                Toast.makeText(requireContext(), "Enter password", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            mAuth.signInWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            assert user != null;
+                            AuthNavigator.navigateToTopics(
+                                    requireActivity(),
+                                    user,
+                                    R.id.fragment_container_view_tag
+                            );
+                        } else {
+                            Toast.makeText(requireContext(), "Что-то пошло не так", Toast.LENGTH_SHORT).show();
+                        }
+                    });
         });
 
-        loginBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String email = emailText.getText().toString();
-                String password = passwordText.getText().toString();
-
-                if (email.isEmpty()) {
-                    Toast.makeText(requireContext(), "Enter email", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if (password.isEmpty()) {
-                    Toast.makeText(requireContext(), "Enter password", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                mAuth.signInWithEmailAndPassword(email, password)
-                        .addOnCompleteListener(task -> {
-                            if (task.isSuccessful()) {
-                                FirebaseUser user = mAuth.getCurrentUser();
-                                AuthNavigator.navigateToTopics(
-                                        requireActivity(),
-                                        user,
-                                        R.id.fragment_container_view_tag
-                                );
-                            } else {
-                                Toast.makeText(requireContext(), "Что-то пошло не так", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-            }
-        });
-
-        loginGoogleBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = googleAuthManager.getSignInIntent();
-                activityResultLauncher.launch(intent);
-            }
+        loginGoogleBtn.setOnClickListener(view2 -> {
+            Intent intent = googleAuthManager.getSignInIntent();
+            activityResultLauncher.launch(intent);
         });
 
         return view;

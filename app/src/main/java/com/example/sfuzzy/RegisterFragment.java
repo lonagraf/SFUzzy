@@ -14,7 +14,6 @@ import androidx.fragment.app.FragmentTransaction;
 public class RegisterFragment extends Fragment {
 
     private EditText emailText, passwordText;
-    private Button btnReg;
     private AuthManager authManager;
 
     @Override
@@ -26,16 +25,11 @@ public class RegisterFragment extends Fragment {
         // Инициализация
         emailText = view.findViewById(R.id.emailText);
         passwordText = view.findViewById(R.id.passwordText);
-        btnReg = view.findViewById(R.id.registrationBtn);
+        Button btnReg = view.findViewById(R.id.registrationBtn);
         authManager = new AuthManager();
 
         // Обработчик нажатия
-        btnReg.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                registerUser();
-            }
-        });
+        btnReg.setOnClickListener(v -> registerUser());
 
         return view;
     }
@@ -59,13 +53,10 @@ public class RegisterFragment extends Fragment {
             @Override
             public void onSuccess() {
                 if (getActivity() != null) {
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(getContext(), "Registration successful!",
-                                    Toast.LENGTH_SHORT).show();
-                            goToLoginFragment();
-                        }
+                    getActivity().runOnUiThread(() -> {
+                        Toast.makeText(getContext(), "Registration successful!",
+                                Toast.LENGTH_SHORT).show();
+                        goToLoginFragment();
                     });
                 }
             }
@@ -73,13 +64,8 @@ public class RegisterFragment extends Fragment {
             @Override
             public void onError(String errorMessage) {
                 if (getActivity() != null) {
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(getContext(), errorMessage,
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                    getActivity().runOnUiThread(() -> Toast.makeText(getContext(), errorMessage,
+                            Toast.LENGTH_SHORT).show());
                 }
             }
         });

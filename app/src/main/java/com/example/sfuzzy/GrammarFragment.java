@@ -22,10 +22,8 @@ public class GrammarFragment extends Fragment {
     private String topicName;
 
     private TextView tvQuestion;
-    private RadioGroup rgAnswers;
-    private Button btnCheck, btnBackToMenu, btnBack;
-    private ProgressBar progressBar;
-    private LinearLayout contentLayout;
+    private Button btnCheck;
+    private Button btnBackToMenu;
 
     private GrammarQuizManager quizManager;
 
@@ -34,10 +32,6 @@ public class GrammarFragment extends Fragment {
         public String question;
         public List<String> options;
         public String correctAnswer;
-
-        // Пустой конструктор для Firebase
-        public Question() {
-        }
 
         public Question(String question, List<String> options, String correctAnswer) {
             this.question = question;
@@ -70,12 +64,12 @@ public class GrammarFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_grammar, container, false);
 
         tvQuestion = view.findViewById(R.id.tvQuestion);
-        rgAnswers = view.findViewById(R.id.rgAnswers);
+        RadioGroup rgAnswers = view.findViewById(R.id.rgAnswers);
         btnCheck = view.findViewById(R.id.btnCheck);
         btnBackToMenu = view.findViewById(R.id.btnBackToMenu);
-        btnBack = view.findViewById(R.id.btnBack);
-        progressBar = view.findViewById(R.id.progressBar);
-        contentLayout = view.findViewById(R.id.contentLayout);
+        Button btnBack = view.findViewById(R.id.btnBack);
+        ProgressBar progressBar = view.findViewById(R.id.progressBar);
+        LinearLayout contentLayout = view.findViewById(R.id.contentLayout);
 
         // Инициализация менеджера теста
         quizManager = new GrammarQuizManager(requireContext(), new GrammarQuizManager.QuizCallback() {

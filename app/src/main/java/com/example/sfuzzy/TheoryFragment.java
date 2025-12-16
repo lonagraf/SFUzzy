@@ -1,5 +1,6 @@
 package com.example.sfuzzy;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.text.Html;
 import android.view.LayoutInflater;
@@ -82,6 +83,7 @@ public class TheoryFragment extends Fragment {
                 progressRepository.incrementLessonProgress();
             }
 
+            @SuppressLint("SetTextI18n")
             @Override
             public void onError(String error) {
                 progressBar.setVisibility(View.GONE);
