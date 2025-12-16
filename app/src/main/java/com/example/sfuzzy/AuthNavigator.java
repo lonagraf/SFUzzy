@@ -30,4 +30,5 @@ public class AuthNavigator {
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
     }
+
 }

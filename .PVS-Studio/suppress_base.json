@@ -1,0 +1,21 @@
+{
+  "warnings": [
+    {
+      "FileName": "",
+      "ErrorCode": "",
+      "Message": "Congratulations! PVS-Studio has not found any issues in your source code!",
+      "CodePrev": 0,
+      "CodeCurrent": 0,
+      "CodeNext": 0
+    },
+    {
+      "FileName": "",
+      "ErrorCode": "Trial",
+      "Message": "License was not entered. Please enter a valid PVS-Studio license or request a trial license at https:",
+      "CodePrev": 0,
+      "CodeCurrent": 0,
+      "CodeNext": 0
+    }
+  ],
+  "version": 1
+}

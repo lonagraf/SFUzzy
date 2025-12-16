@@ -91,11 +91,11 @@ public class GrammarQuizManagerTest {
         int total = 8;
         int completed = 8;
 
-        boolean isComplete = completed >= total;
+        boolean isComplete = completed >= total; //-V6007
         assertTrue("Тест должен быть завершен", isComplete);
 
         completed = 4;
-        isComplete = completed >= total;
+        isComplete = completed >= total; //-V6007
         assertFalse("Тест не должен быть завершен", isComplete);
     }
 

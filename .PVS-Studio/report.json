@@ -1,0 +1,133 @@
+{
+  "version": 3,
+  "warnings": [
+    {
+      "code": "Renew",
+      "cwe": 0,
+      "level": 1,
+      "positions": [
+        {
+          "file": "",
+          "line": 1,
+          "endLine": 1,
+          "column": 1,
+          "endColumn": 1,
+          "navigation": {
+            "previousLine": 0,
+            "currentLine": 0,
+            "nextLine": 0,
+            "columns": 0
+          }
+        }
+      ],
+      "message": "Your license will expire in 7 days. Click \u0027Renew\u0027 to learn more or contact us via the Feedback form on our website.",
+      "projects": [],
+      "favorite": false,
+      "falseAlarm": false,
+      "analyzedSourceFiles": []
+    },
+    {
+      "code": "Update",
+      "cwe": 0,
+      "level": 1,
+      "positions": [
+        {
+          "file": "",
+          "line": 1,
+          "endLine": 1,
+          "column": 1,
+          "endColumn": 1,
+          "navigation": {
+            "previousLine": 0,
+            "currentLine": 0,
+            "nextLine": 0,
+            "columns": 0
+          }
+        }
+      ],
+      "message": "A newer version of PVS-Studio is available (7.40.101088)",
+      "projects": [],
+      "favorite": false,
+      "falseAlarm": false,
+      "analyzedSourceFiles": []
+    },
+    {
+      "code": "V6007",
+      "cwe": 570,
+      "sastId": "CERT-MSC57-J",
+      "level": 1,
+      "positions": [
+        {
+          "file": "C:\\Users\\1\\AndroidStudioProjects\\SFUzzyM\\app\\src\\test\\java\\com\\example\\sfuzzy\\GrammarQuizManagerTest.java",
+          "line": 98,
+          "endLine": 98,
+          "column": 22,
+          "endColumn": 39,
+          "navigation": {
+            "previousLine": 141847,
+            "currentLine": 1314606325,
+            "nextLine": 935546380,
+            "columns": 0
+          }
+        }
+      ],
+      "message": "Expression \u0027completed \u003e\u003d total\u0027 is always false.",
+      "projects": [],
+      "favorite": false,
+      "falseAlarm": true,
+      "analyzedSourceFiles": []
+    },
+    {
+      "code": "V6007",
+      "cwe": 571,
+      "sastId": "CERT-MSC57-J",
+      "level": 1,
+      "positions": [
+        {
+          "file": "C:\\Users\\1\\AndroidStudioProjects\\SFUzzyM\\app\\src\\test\\java\\com\\example\\sfuzzy\\GrammarQuizManagerTest.java",
+          "line": 94,
+          "endLine": 94,
+          "column": 30,
+          "endColumn": 47,
+          "navigation": {
+            "previousLine": 0,
+            "currentLine": -832877079,
+            "nextLine": -1690350067,
+            "columns": 0
+          }
+        }
+      ],
+      "message": "Expression \u0027completed \u003e\u003d total\u0027 is always true.",
+      "projects": [],
+      "favorite": false,
+      "falseAlarm": true,
+      "analyzedSourceFiles": []
+    },
+    {
+      "code": "V6007",
+      "cwe": 571,
+      "sastId": "CERT-MSC57-J",
+      "level": 1,
+      "positions": [
+        {
+          "file": "C:\\Users\\1\\AndroidStudioProjects\\SFUzzyM\\app\\src\\test\\java\\com\\example\\sfuzzy\\WordsQuizManagerTest.java",
+          "line": 137,
+          "endLine": 137,
+          "column": 31,
+          "endColumn": 48,
+          "navigation": {
+            "previousLine": 0,
+            "currentLine": -1657933876,
+            "nextLine": 914267440,
+            "columns": 0
+          }
+        }
+      ],
+      "message": "Expression \u0027current \u003e\u003d total\u0027 is always true.",
+      "projects": [],
+      "favorite": false,
+      "falseAlarm": true,
+      "analyzedSourceFiles": []
+    }
+  ]
+}

@@ -129,7 +129,7 @@ public class GrammarQuizManager {
         tvQuestion.setText(q.question);
 
         rgAnswers.removeAllViews();
-        rgAnswers.clearCheck();  // 🔹 сбрасываем выбор перед новым вопросом
+        rgAnswers.clearCheck();  // сбрасываем выбор перед новым вопросом
 
         for (String option : q.options) {
             RadioButton rb = new RadioButton(context);
@@ -154,15 +154,4 @@ public class GrammarQuizManager {
         }
     }
 
-    public boolean hasNextQuestion() {
-        return isLoaded && questions != null && currentQuestionIndex < questions.size();
-    }
-
-    public void reset() {
-        currentQuestionIndex = 0;
-        score = 0;
-        if (questions != null && !questions.isEmpty()) {
-            displayQuestion(0);
-        }
-    }
 }

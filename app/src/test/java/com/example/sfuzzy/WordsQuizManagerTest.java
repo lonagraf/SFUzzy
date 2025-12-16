@@ -134,7 +134,7 @@ public class WordsQuizManagerTest {
         int total = 5;
         int current = 5;
 
-        boolean isCompleted = (current >= total);
+        boolean isCompleted = (current >= total); //-V6007
         assertTrue("Тест должен быть завершён когда пройдены все слова", isCompleted);
     }
 

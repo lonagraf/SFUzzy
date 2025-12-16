@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -14,7 +13,7 @@ import androidx.fragment.app.Fragment;
 public class TopicsFragment extends Fragment {
 
     private TextView tvGreeting;
-    private ImageView ivMascot;
+
 
     private TextView tvTopic1, tvTopic2, tvTopic3, tvTopic4;
     private Button btnOpen1, btnOpen2, btnOpen3, btnOpen4;
@@ -26,7 +25,6 @@ public class TopicsFragment extends Fragment {
 
         // Greeting
         tvGreeting = view.findViewById(R.id.tvGreeting);
-        ivMascot = view.findViewById(R.id.ivMascot);
 
         Button btnProfile = view.findViewById(R.id.btnProfile);
 

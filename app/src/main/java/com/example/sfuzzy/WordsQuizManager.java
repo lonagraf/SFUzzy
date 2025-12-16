@@ -161,23 +161,4 @@ public class WordsQuizManager {
         }
     }
 
-    public boolean hasNextWord() {
-        return isLoaded && currentIndex < englishWords.size();
-    }
-
-    public void reset() {
-        currentIndex = 0;
-        Collections.shuffle(englishWords);
-        if (!englishWords.isEmpty()) {
-            loadNextWord();
-        }
-    }
-
-    public int getCurrentIndex() {
-        return currentIndex;
-    }
-
-    public int getTotalWords() {
-        return englishWords.size();
-    }
 }
